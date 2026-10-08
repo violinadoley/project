@@ -1,10 +1,14 @@
 # PROJECT_NAME
 
+**Web app:** `https://YOUR_GCP_PROJECT_ID.web.app` (Firebase Hosting, free tier) · **API docs:** [Backend API (Swagger)](https://ai-hackathon-api-2lcs3sivbq-el.a.run.app/docs) — see [docs/setup/firebase-hosting.md](docs/setup/firebase-hosting.md)
+
 ## Overview
 
 Production-quality **starter monorepo** for a Google-native AI hackathon project. It includes a Next.js dashboard, FastAPI backend with Gemini, Firebase-ready auth/data/storage hooks, Docker for Cloud Run, tests, and CI.
 
 Replace placeholders (`PROJECT_NAME`, problem statement, domain logic) after your team selects a competition track.
+
+Repo variable `BACKEND_API_URL` holds the Swagger URL after each [**Deploy API**](.github/workflows/deploy.yml) run. Local dev: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs).
 
 ## Problem
 
@@ -18,7 +22,7 @@ TODO: Describe the proposed AI solution
 
 - Landing page and generic AI dashboard (text + file upload)
 - Gemini integration via official `google-genai` SDK (model from env)
-- Firebase Auth, Firestore, and Storage abstractions (stubs ready to extend)
+- Firebase Auth (Google), Firestore activity feed, and GCS uploads via the API
 - Optional auth (`AUTH_REQUIRED=false` for local dev)
 - Structured API errors and JSON logging for Cloud Run
 - Backend pytest suite and GitHub Actions CI
@@ -31,7 +35,7 @@ TODO: Describe the proposed AI solution
 | Backend | Python 3.11+, FastAPI, Uvicorn, Pydantic Settings |
 | AI | Google Gemini (`google-genai`) |
 | Data / Auth | Firebase (Auth, Firestore, Storage) |
-| Deploy | Cloud Run (API), Firebase Hosting / App Hosting (UI) |
+| Deploy | Cloud Run (API), Firebase Hosting (UI, static export) |
 
 ## Architecture
 
@@ -106,9 +110,10 @@ npm run test:e2e
 | Workflow | Trigger | Status |
 |----------|---------|--------|
 | [ci.yml](.github/workflows/ci.yml) | PR + push to `main` / `develop` | **AUTOMATED** (in repo) |
-| [deploy.yml](.github/workflows/deploy.yml) | push to `develop` | **MANUAL SETUP REQUIRED** (GCP + GitHub `gcp` env) |
+| [deploy.yml](.github/workflows/deploy.yml) | push to `develop` | Cloud Run API |
+| [deploy-frontend.yml](.github/workflows/deploy-frontend.yml) | push to `develop` | Firebase Hosting (free) |
 
-OIDC setup: [docs/setup/github-google-oidc.md](docs/setup/github-google-oidc.md)
+Setup: [docs/setup/github-google-oidc.md](docs/setup/github-google-oidc.md) · [docs/setup/firebase-hosting.md](docs/setup/firebase-hosting.md) · [docs/setup/firebase-backend.md](docs/setup/firebase-backend.md)
 
 ## Deployment
 
@@ -124,9 +129,9 @@ OIDC setup: [docs/setup/github-google-oidc.md](docs/setup/github-google-oidc.md)
 
 ## Firebase Setup
 
-1. Add Firebase to your GCP project.
-2. Enable Authentication and (optionally) Firestore and Storage.
-3. Configure web app env vars on the frontend and Admin SDK on Cloud Run.
+1. Add Firebase to the same GCP project as Cloud Run.
+2. Follow [docs/setup/firebase-hosting.md](docs/setup/firebase-hosting.md) (public UI) and [docs/setup/firebase-backend.md](docs/setup/firebase-backend.md) (Auth, Firestore, Storage, GitHub vars).
+3. Sync web client vars: `./scripts/sync-firebase-github-vars.sh YOUR_GCP_PROJECT_ID` (after `firebase login` and a registered Web app).
 
 ## Gemini Setup
 
@@ -146,11 +151,14 @@ scripts/           dev.sh, deploy.sh, smoke-api.sh
 .github/workflows/ CI + Cloud Run deploy
 ```
 
-## Future Enhancements
+## Starter template status
+
+The **platform starter** (CI/CD, Hosting, Cloud Run, Auth, activity in Firestore, uploads to Storage) is complete on `develop`. See [docs/starter-template.md](docs/starter-template.md). Build your competition on top via prompts, routes, and UI — [docs/architecture.md](docs/architecture.md).
+
+## Future Enhancements (product team)
 
 - [ ] Competition-specific prompts and workflows
-- [ ] Firestore-backed chat history and activity feed
-- [ ] GCS upload in production
+- [ ] Richer chat history and user-scoped activity
 - [ ] RAG + Gemini embeddings + vector search
 - [ ] Google ADK agentic tools
 - [ ] Structured outputs and multimodal pipelines
@@ -171,4 +179,4 @@ scripts/           dev.sh, deploy.sh, smoke-api.sh
 
 ## License
 
-TODO: Add license if required by your hackathon.
+[MIT](LICENSE) — adjust copyright holder if your team requires a different license for submission.

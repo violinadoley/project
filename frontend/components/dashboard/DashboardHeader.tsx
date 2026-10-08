@@ -29,12 +29,12 @@ export function DashboardHeader() {
             <Link href="/dashboard" className="text-foreground font-medium">
               Dashboard
             </Link>
-            <span className="cursor-not-allowed" title="TODO">
+            <Link
+              href="/dashboard#recent-activity"
+              className="hover:text-foreground"
+            >
               Activity
-            </span>
-            <span className="cursor-not-allowed" title="TODO">
-              Settings
-            </span>
+            </Link>
           </nav>
         </div>
         <div className="flex items-center gap-2">
@@ -52,8 +52,8 @@ export function DashboardHeader() {
                 {user?.email ?? "Guest user"}
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem disabled>Profile (TODO)</DropdownMenuItem>
-              <DropdownMenuItem disabled>Preferences (TODO)</DropdownMenuItem>
+              <DropdownMenuItem disabled>Profile (competition build)</DropdownMenuItem>
+              <DropdownMenuItem disabled>Preferences (competition build)</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
