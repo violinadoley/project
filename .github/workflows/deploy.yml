@@ -70,6 +70,15 @@ jobs:
       - name: Deploy Cloud Run
         run: |
           CORS_ORIGINS="http://localhost:3000,https://${{ vars.GCP_PROJECT_ID }}.web.app,https://${{ vars.GCP_PROJECT_ID }}.firebaseapp.com"
+          ENV_FILE="$(mktemp)"
+          {
+            echo "ENVIRONMENT: cloud"
+            echo "APP_VERSION: 0.1.0"
+            echo "GIT_SHA: ${{ github.sha }}"
+            echo "GEMINI_MODEL: gemini-2.5-flash"
+            echo 'AUTH_REQUIRED: "false"'
+            echo "CORS_ORIGINS: ${CORS_ORIGINS}"
+          } > "$ENV_FILE"
           gcloud run deploy "${{ env.SERVICE_NAME }}" \
             --project "${{ vars.GCP_PROJECT_ID }}" \
             --region "${{ vars.GCP_REGION }}" \
@@ -82,7 +91,7 @@ jobs:
             --cpu 1 \
             --timeout 60 \
             --concurrency 80 \
-            --set-env-vars "^:^ENVIRONMENT=cloud:APP_VERSION=0.1.0:GIT_SHA=${{ github.sha }}:GEMINI_MODEL=gemini-2.5-flash:AUTH_REQUIRED=false:CORS_ORIGINS=${CORS_ORIGINS}" \
+            --env-vars-file "$ENV_FILE" \
             --set-secrets "GEMINI_API_KEY=GEMINI_API_KEY:latest"
 
       - name: Smoke test API
