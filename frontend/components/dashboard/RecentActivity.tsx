@@ -88,7 +88,7 @@ export function RecentActivity() {
   }, [load]);
 
   return (
-    <Card>
+    <Card id="recent-activity">
       <CardHeader>
         <CardTitle>Recent activity</CardTitle>
         <CardDescription>
