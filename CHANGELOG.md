@@ -23,5 +23,5 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versio
 - Initial hackathon starter monorepo (Next.js + FastAPI + Gemini + Firebase hooks)
 - Basic CI and deployment documentation
 
-[Unreleased]: https://github.com/violinadoley/AI-Builder-Cup-/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/violinadoley/AI-Builder-Cup-/releases/tag/v0.1.0
+[Unreleased]: https://github.com/violinadoley/project/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/violinadoley/project/releases/tag/v0.1.0
