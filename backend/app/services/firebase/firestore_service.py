@@ -68,9 +68,7 @@ class FirestoreService:
         from firebase_admin import firestore
 
         db = self._client()
-        direction = (
-            firestore.Query.DESCENDING if descending else firestore.Query.ASCENDING
-        )
+        direction = firestore.Query.DESCENDING if descending else firestore.Query.ASCENDING
         docs = (
             db.collection(collection)
             .order_by(order_field, direction=direction)
