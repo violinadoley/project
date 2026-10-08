@@ -13,6 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { notifyActivityUpdated } from "@/lib/activity-events";
 import { uploadFile } from "@/lib/api";
 import type { FileUploadResponse } from "@/types/api";
 
@@ -31,6 +32,7 @@ export function FileUpload() {
     try {
       const data = await uploadFile(file);
       setResult(data);
+      notifyActivityUpdated();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload failed.");
     } finally {
@@ -60,8 +62,8 @@ export function FileUpload() {
       <CardHeader>
         <CardTitle>File upload</CardTitle>
         <CardDescription>
-          PDF, PNG, JPEG, or TXT. Files are validated on the backend. TODO:
-          connect document processing for your domain.
+          PDF, PNG, JPEG, or TXT. Validated on the API; stored in Cloud Storage when
+          the backend bucket is configured.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">

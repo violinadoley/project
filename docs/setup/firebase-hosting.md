@@ -36,8 +36,13 @@ gcloud projects add-iam-policy-binding "$PROJECT_ID" \
 | Variable | Required | Example |
 |----------|----------|---------|
 | `PUBLIC_API_URL` | **Yes** | `https://ai-hackathon-api-….run.app` |
-| `NEXT_PUBLIC_FIREBASE_*` | No | From Firebase **Project settings → Your apps → Web** (only if you want Google login in the UI) |
-| `NEXT_PUBLIC_AUTH_REQUIRED` | No | `false` (default) |
+| `NEXT_PUBLIC_FIREBASE_API_KEY` | For Google login | Web app config — see [firebase-backend.md](./firebase-backend.md) |
+| `NEXT_PUBLIC_FIREBASE_APP_ID` | For Google login | Web app config |
+| `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` | For Google login | Web app config |
+| `FIREBASE_STORAGE_BUCKET` | No | Defaults to `{GCP_PROJECT_ID}.firebasestorage.app` |
+| `AUTH_REQUIRED` / `NEXT_PUBLIC_AUTH_REQUIRED` | No | `false` (default) |
+
+Backend Firestore, Storage, and Auth: [firebase-backend.md](./firebase-backend.md).
 
 Workflow: [`.github/workflows/deploy-frontend.yml`](../../.github/workflows/deploy-frontend.yml) on push to `develop`.
 

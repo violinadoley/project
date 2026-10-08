@@ -19,7 +19,7 @@ export function LoginButton() {
   if (!configured) {
     return (
       <Button variant="outline" size="sm" disabled title="Configure Firebase env vars">
-        Auth (TODO)
+        Sign in (Firebase not configured)
       </Button>
     );
   }
