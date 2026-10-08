@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 
 from app.api.router import api_router
 from app.core.config import get_settings
@@ -35,7 +35,7 @@ async def lifespan(_app: FastAPI):
 def create_app() -> FastAPI:
     settings = get_settings()
     app = FastAPI(
-        title="AI Hackathon API",
+        title="Backend API",
         version="0.1.0",
         lifespan=lifespan,
         docs_url="/docs" if not settings.is_production else None,
@@ -87,6 +87,31 @@ def create_app() -> FastAPI:
             "status": "ok",
             "environment": settings.environment,
             "version": settings.app_version,
+        }
+
+    @app.get("/", tags=["health"])
+    def root(request: Request) -> HTMLResponse | dict[str, str]:
+        """Browsers get a single named link; API clients get JSON."""
+        if "text/html" in request.headers.get("accept", ""):
+            return HTMLResponse(
+                """<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Backend API</title>
+</head>
+<body style="font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5;">
+  <p><a href="/docs">Backend API (Swagger UI)</a></p>
+</body>
+</html>"""
+            )
+        return {
+            "service": "Backend API",
+            "docs": "/docs",
+            "health": "/health",
+            "ready": "/ready",
+            "api": "/api/v1",
         }
 
     @app.get("/health", response_model=HealthResponse, tags=["health"])
