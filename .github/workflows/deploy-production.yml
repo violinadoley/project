@@ -22,6 +22,7 @@ env:
 
 jobs:
   deploy:
+    if: vars.GCP_PROJECT_ID_PRODUCTION != ''
     runs-on: ubuntu-latest
     environment: production
     steps:

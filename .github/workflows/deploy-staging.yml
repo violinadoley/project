@@ -22,6 +22,8 @@ env:
 
 jobs:
   deploy:
+    # Skips until GitHub Variables are set (see docs/setup/github-google-oidc.md).
+    if: vars.GCP_PROJECT_ID_STAGING != ''
     runs-on: ubuntu-latest
     environment: staging
     steps:
