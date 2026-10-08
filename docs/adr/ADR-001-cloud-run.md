@@ -6,7 +6,7 @@ We need a managed, low-ops HTTP host for FastAPI with scale-to-zero for hackatho
 
 ## Decision
 
-Deploy the API as a container on **Google Cloud Run** per environment (`*-staging`, `*-production`).
+Deploy the API as a container on **Google Cloud Run** (`ai-hackathon-api` in the hackathon GCP project).
 
 ## Alternatives considered
 
@@ -17,4 +17,4 @@ Deploy the API as a container on **Google Cloud Run** per environment (`*-stagin
 ## Consequences
 
 - Docker image required; Artifact Registry for CI pushes
-- Cold starts acceptable for staging; tune min instances only if demos require it
+- Cold starts acceptable for demos; tune min instances only if needed

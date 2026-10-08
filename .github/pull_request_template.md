@@ -59,6 +59,6 @@
 - [ ] No secrets committed (`.env`, keys, JSON credentials)
 - [ ] Documentation updated if behavior or architecture changed
 - [ ] AI evaluation run if AI behavior changed
-- [ ] Database changes reviewed (staging first)
+- [ ] Database changes reviewed (Cloud Run / Firebase project first)
 - [ ] Security implications reviewed
 - [ ] Cost implications considered
