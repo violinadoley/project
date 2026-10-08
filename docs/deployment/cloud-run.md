@@ -30,10 +30,7 @@ Use a dedicated GCP / Firebase project for this app — do not point local dev a
 
 ## Finding the URL (team-friendly)
 
-Each deploy updates:
-
-- GitHub **About → Website** → API root (browser shows one link: **Backend API (Swagger UI)**)
-- Repository variable **`BACKEND_API_URL`** → full `/docs` URL for copy/paste
+Each deploy updates repository variable **`BACKEND_API_URL`** (Swagger `/docs`). Set GitHub **About** to the Firebase **web app** URL and mention the API in the description.
 
 ## Legacy service name
 
