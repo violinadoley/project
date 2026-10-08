@@ -28,12 +28,12 @@ class StorageService:
 
     @property
     def storage_configured(self) -> bool:
+        env = self._settings.environment.lower()
+        runtime_adc = env in ("production", "cloud")
         return bool(
-            self._settings.firebase_storage_bucket
-            and (
-                self._settings.google_application_credentials
-                or self._settings.environment == "production"
-            )
+            self._settings.firebase_project_id
+            and self._settings.firebase_storage_bucket
+            and (self._settings.google_application_credentials or runtime_adc)
         )
 
     def upload(self, data: bytes, filename: str, content_type: str) -> UploadResult:
@@ -54,7 +54,7 @@ class StorageService:
                 logger.exception("Storage upload failed; returning metadata only")
                 storage_key = None
         else:
-            logger.debug("Storage not configured; metadata-only upload (TODO: enable GCS).")
+            logger.debug("Storage not configured; metadata-only upload.")
 
         return UploadResult(
             storage_key=storage_key,

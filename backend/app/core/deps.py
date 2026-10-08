@@ -4,6 +4,7 @@ from app.ai.base import AIService
 from app.ai.services.gemini_service import GeminiService
 from app.core.config import Settings, get_settings
 from app.core.exceptions import AuthenticationError
+from app.services.firebase.activity_service import ActivityService
 from app.services.firebase.firestore_service import FirestoreService
 from app.services.storage.storage_service import StorageService
 from fastapi import Depends, Header
@@ -36,24 +37,39 @@ def get_storage_service(
     return StorageService(settings)
 
 
+def get_activity_service(
+    settings: Annotated[Settings, Depends(get_settings)],
+    firestore: Annotated[FirestoreService, Depends(get_firestore_service)],
+) -> ActivityService:
+    return ActivityService(settings, firestore)
+
+
 async def get_current_user_optional(
     settings: Annotated[Settings, Depends(get_settings)],
     authorization: Annotated[str | None, Header()] = None,
 ) -> dict[str, Any] | None:
-    if not settings.auth_required:
-        return None
     if not authorization or not authorization.startswith("Bearer "):
-        raise AuthenticationError()
+        if settings.auth_required:
+            raise AuthenticationError()
+        return None
     token = authorization.removeprefix("Bearer ").strip()
     if not token:
-        raise AuthenticationError()
+        if settings.auth_required:
+            raise AuthenticationError()
+        return None
+    if not settings.firebase_configured:
+        if settings.auth_required:
+            raise AuthenticationError("Authentication is not configured on the server.")
+        return None
     try:
         from firebase_admin import auth
 
         decoded: dict[str, Any] = auth.verify_id_token(token)
         return decoded
     except Exception as exc:
-        raise AuthenticationError("Invalid or expired token.") from exc
+        if settings.auth_required:
+            raise AuthenticationError("Invalid or expired token.") from exc
+        return None
 
 
 async def require_user(

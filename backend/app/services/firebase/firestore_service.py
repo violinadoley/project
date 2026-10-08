@@ -56,3 +56,25 @@ class FirestoreService:
         db = self._client()
         docs = db.collection(collection).limit(limit).stream()
         return [{"id": d.id, **d.to_dict()} for d in docs]
+
+    def list_documents_ordered(
+        self,
+        collection: str,
+        *,
+        order_field: str,
+        descending: bool = True,
+        limit: int = 50,
+    ) -> list[dict[str, Any]]:
+        from firebase_admin import firestore
+
+        db = self._client()
+        direction = (
+            firestore.Query.DESCENDING if descending else firestore.Query.ASCENDING
+        )
+        docs = (
+            db.collection(collection)
+            .order_by(order_field, direction=direction)
+            .limit(limit)
+            .stream()
+        )
+        return [{"id": d.id, **(d.to_dict() or {})} for d in docs]
