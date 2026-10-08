@@ -4,18 +4,18 @@ Thank you for helping build this project. We optimize for a small team, clear re
 
 ## Branching
 
-| Branch | Environment | Purpose |
-|--------|-------------|---------|
-| `main` | Production | Release-ready code only |
-| `develop` | Staging | Integration branch |
-| `feature/*`, `fix/*`, … | Local / PR | All day-to-day work |
+| Branch | Purpose |
+|--------|---------|
+| `main` | Stable / release-ready (no separate cloud deploy) |
+| `develop` | Integration; merges here deploy to Cloud Run |
+| `feature/*`, `fix/*`, … | Day-to-day work via PR |
 
 **Rules**
 
 1. Do not commit directly to `main` or `develop` (except documented emergencies).
 2. Branch from `develop` for features and fixes.
 3. Open a Pull Request into `develop`.
-4. Merge `develop` → `main` via release PR after staging QA.
+4. Optionally merge `develop` → `main` when you want the stable branch to match what you demoed on Cloud Run.
 
 Example:
 

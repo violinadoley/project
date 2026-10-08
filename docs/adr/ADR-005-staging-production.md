@@ -1,16 +1,18 @@
-# ADR-005: Staging and production isolation
+# ADR-005: Deployed vs local environments (hackathon)
 
 ## Context
 
-Direct-to-production development causes outages and data leaks.
+Full staging + production isolation is valuable for long-lived products but heavy for a hackathon.
 
 ## Decision
 
-- `develop` → staging resources
-- `main` → production resources
-- Separate GCP/Firebase projects (recommended) and secrets
+- **Local** — development on localhost with dev keys and emulators when possible.
+- **Cloud** — one GCP project; Cloud Run service `ai-hackathon-api`; deploy from **`develop`** only.
+- **`main`** — stable branch and CI target; no second Cloud Run environment in this starter.
+
+Secrets and Firebase data stay in the hackathon GCP project; do not reuse personal or employer production projects.
 
 ## Consequences
 
-- Double setup cost, lower incident risk
-- GitHub environments `staging` and `production` gate deploy credentials
+- Simpler setup (one WIF pool, one set of GitHub variables, GitHub environment `gcp`)
+- Less blast-radius separation than multi-env prod — acceptable for competition scope

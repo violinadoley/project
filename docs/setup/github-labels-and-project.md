@@ -38,7 +38,7 @@ GitHub CLI needs `read:project` / `project` scope to automate. Create in the UI:
 | Ready | Spec clear, can pick up |
 | In Progress | Active branch |
 | Code Review | PR open |
-| Staging | Merged to `develop`, QA on staging |
+| Cloud | Merged to `develop`, verify on Cloud Run |
 | Done | Merged/released |
 
 ### Workflow
