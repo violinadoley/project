@@ -12,7 +12,9 @@
 
 1. Open [Firebase Console](https://console.firebase.google.com/) → **Add project** → select your **existing** GCP project (`GCP_PROJECT_ID`).
 2. Stay on the **Spark (free)** plan when prompted.
-3. **Build → Hosting → Get started** (creates the default site `{projectId}.web.app`).
+3. **Build → Hosting → Get started** (creates the default site `{projectId}.web.app`).  
+   **Required** — deploy fails until this one-time step is done.
+4. If deploy logs mention a missing site, confirm the site id matches your GCP project id (default).
 
 ## 2. Enable API + IAM for GitHub deploy
 
