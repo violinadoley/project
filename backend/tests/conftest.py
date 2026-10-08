@@ -1,9 +1,8 @@
 import pytest
-from fastapi.testclient import TestClient
-
+from app.ai.base import AIService
 from app.core.deps import get_gemini_service
 from app.main import app
-from app.services.ai.base import AIService
+from fastapi.testclient import TestClient
 
 
 class FakeAIService(AIService):

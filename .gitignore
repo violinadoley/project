@@ -42,3 +42,11 @@ dist/
 
 # Logs
 *.log
+
+# AI eval artifacts
+ai-evals/results/*
+!ai-evals/results/.gitkeep
+
+# Playwright
+frontend/playwright-report/
+frontend/test-results/

@@ -1,6 +1,6 @@
 from typing import Any, Generic, TypeVar
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 T = TypeVar("T")
 
@@ -23,3 +23,11 @@ class SuccessResponse(BaseModel, Generic[T]):
 
 class HealthResponse(BaseModel):
     status: str = "ok"
+    environment: str | None = None
+    version: str | None = None
+
+
+class ReadyResponse(BaseModel):
+    status: str = "ready"
+    environment: str | None = None
+    version: str | None = None

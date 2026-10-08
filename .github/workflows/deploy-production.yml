@@ -1,0 +1,98 @@
+# MANUAL SETUP REQUIRED: GitHub environment "production" with approval + branch restriction on main.
+# See docs/setup/github-google-oidc.md and docs/deployment/production.md
+
+name: Deploy Production
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  SERVICE_NAME: ai-hackathon-api-production
+  IMAGE_NAME: ai-hackathon-api
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Guard branch
+        run: |
+          if [ "${{ github.ref }}" != "refs/heads/main" ]; then
+            echo "Production deploys only from main."
+            exit 1
+          fi
+
+      - name: Validate required variables
+        run: |
+          set -euo pipefail
+          for v in GCP_PROJECT_ID GCP_REGION GCP_WIF_PROVIDER GCP_WIF_SERVICE_ACCOUNT GCP_ARTIFACT_REPO; do
+            if [ -z "${!v:-}" ]; then
+              echo "::error::Missing repository variable $v (production)."
+              exit 1
+            fi
+          done
+        env:
+          GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID_PRODUCTION }}
+          GCP_REGION: ${{ vars.GCP_REGION }}
+          GCP_WIF_PROVIDER: ${{ vars.GCP_WIF_PROVIDER_PRODUCTION }}
+          GCP_WIF_SERVICE_ACCOUNT: ${{ vars.GCP_WIF_SERVICE_ACCOUNT_PRODUCTION }}
+          GCP_ARTIFACT_REPO: ${{ vars.GCP_ARTIFACT_REPO_PRODUCTION }}
+
+      - id: auth
+        name: Authenticate to Google Cloud (OIDC)
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER_PRODUCTION }}
+          service_account: ${{ vars.GCP_WIF_SERVICE_ACCOUNT_PRODUCTION }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker for Artifact Registry
+        run: |
+          gcloud auth configure-docker "${{ vars.GCP_REGION }}-docker.pkg.dev" --quiet
+
+      - name: Build and push container
+        working-directory: backend
+        run: |
+          IMAGE="${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID_PRODUCTION }}/${{ vars.GCP_ARTIFACT_REPO_PRODUCTION }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+          docker build -t "$IMAGE" .
+          docker push "$IMAGE"
+          echo "IMAGE=$IMAGE" >> "$GITHUB_ENV"
+
+      - name: Deploy Cloud Run (production)
+        run: |
+          gcloud run deploy "${{ env.SERVICE_NAME }}" \
+            --project "${{ vars.GCP_PROJECT_ID_PRODUCTION }}" \
+            --region "${{ vars.GCP_REGION }}" \
+            --image "$IMAGE" \
+            --platform managed \
+            --allow-unauthenticated \
+            --min-instances 0 \
+            --max-instances 10 \
+            --memory 512Mi \
+            --cpu 1 \
+            --timeout 60 \
+            --concurrency 80 \
+            --set-env-vars "ENVIRONMENT=production,APP_VERSION=0.1.0,GIT_SHA=${{ github.sha }},GEMINI_MODEL=gemini-2.5-flash,AUTH_REQUIRED=true" \
+            --set-secrets "GEMINI_API_KEY=GEMINI_API_KEY:latest"
+
+      - name: Smoke test API
+        run: |
+          URL=$(gcloud run services describe "${{ env.SERVICE_NAME }}" \
+            --project "${{ vars.GCP_PROJECT_ID_PRODUCTION }}" \
+            --region "${{ vars.GCP_REGION }}" \
+            --format 'value(status.url)')
+          chmod +x scripts/smoke-api.sh
+          API_BASE_URL="$URL" scripts/smoke-api.sh

@@ -14,11 +14,13 @@ class Settings(BaseSettings):
 
     gemini_api_key: str | None = Field(default=None, alias="GEMINI_API_KEY")
     gemini_model: str = Field(default="gemini-2.5-flash", alias="GEMINI_MODEL")
+    ai_prompt_version: str = Field(default="v1", alias="AI_PROMPT_VERSION")
+
+    app_version: str = Field(default="0.1.0", alias="APP_VERSION")
+    git_sha: str = Field(default="dev", alias="GIT_SHA")
 
     firebase_project_id: str | None = Field(default=None, alias="FIREBASE_PROJECT_ID")
-    firebase_storage_bucket: str | None = Field(
-        default=None, alias="FIREBASE_STORAGE_BUCKET"
-    )
+    firebase_storage_bucket: str | None = Field(default=None, alias="FIREBASE_STORAGE_BUCKET")
     google_application_credentials: str | None = Field(
         default=None, alias="GOOGLE_APPLICATION_CREDENTIALS"
     )
@@ -28,9 +30,7 @@ class Settings(BaseSettings):
 
     environment: str = Field(default="development", alias="ENVIRONMENT")
     log_level: str = Field(default="INFO", alias="LOG_LEVEL")
-    cors_origins: str = Field(
-        default="http://localhost:3000", alias="CORS_ORIGINS"
-    )
+    cors_origins: str = Field(default="http://localhost:3000", alias="CORS_ORIGINS")
 
     @property
     def cors_origin_list(self) -> list[str]:

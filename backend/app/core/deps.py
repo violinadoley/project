@@ -1,13 +1,12 @@
 from typing import Annotated, Any
 
-from fastapi import Depends, Header
-
+from app.ai.base import AIService
+from app.ai.services.gemini_service import GeminiService
 from app.core.config import Settings, get_settings
 from app.core.exceptions import AuthenticationError
-from app.services.ai.base import AIService
-from app.services.ai.gemini_service import GeminiService
 from app.services.firebase.firestore_service import FirestoreService
 from app.services.storage.storage_service import StorageService
+from fastapi import Depends, Header
 
 _gemini_override: AIService | None = None
 
@@ -51,7 +50,7 @@ async def get_current_user_optional(
     try:
         from firebase_admin import auth
 
-        decoded = auth.verify_id_token(token)
+        decoded: dict[str, Any] = auth.verify_id_token(token)
         return decoded
     except Exception as exc:
         raise AuthenticationError("Invalid or expired token.") from exc
