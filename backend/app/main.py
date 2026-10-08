@@ -89,7 +89,7 @@ def create_app() -> FastAPI:
             "version": settings.app_version,
         }
 
-    @app.get("/", tags=["health"])
+    @app.get("/", tags=["health"], response_model=None)
     def root(request: Request) -> HTMLResponse | dict[str, str]:
         """Browsers get a single named link; API clients get JSON."""
         if "text/html" in request.headers.get("accept", ""):
