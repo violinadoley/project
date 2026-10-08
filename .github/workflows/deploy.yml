@@ -95,6 +95,7 @@ jobs:
           API_BASE_URL="$URL" scripts/smoke-api.sh
 
       - name: Publish live API link for the team
+        continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
