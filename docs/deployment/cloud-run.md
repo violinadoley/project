@@ -31,6 +31,13 @@ Runtime env vars are set in the workflow (`ENVIRONMENT=cloud`, `AUTH_REQUIRED=fa
 
 Use a dedicated GCP / Firebase project for this app — do not point local dev at the same Firestore you use for demos unless intentional.
 
+## Finding the URL (team-friendly)
+
+Each deploy updates:
+
+- GitHub **About → Website** → API root (browser shows one link: **Backend API (Swagger UI)**)
+- Repository variable **`BACKEND_API_URL`** → full `/docs` URL for copy/paste
+
 ## Legacy service name
 
 If you previously deployed `ai-hackathon-api-staging`, delete that Cloud Run service in the console after the first successful **Deploy API** run (the URL will change to `ai-hackathon-api`).

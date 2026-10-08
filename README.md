@@ -1,10 +1,14 @@
 # PROJECT_NAME
 
+[Backend API (Swagger UI)](https://ai-hackathon-api-2lcs3sivbq-el.a.run.app/docs) · also on GitHub **About → Website** (opens the API home page with the same link)
+
 ## Overview
 
 Production-quality **starter monorepo** for a Google-native AI hackathon project. It includes a Next.js dashboard, FastAPI backend with Gemini, Firebase-ready auth/data/storage hooks, Docker for Cloud Run, tests, and CI.
 
 Replace placeholders (`PROJECT_NAME`, problem statement, domain logic) after your team selects a competition track.
+
+Repo variable `BACKEND_API_URL` holds the Swagger URL after each [**Deploy API**](.github/workflows/deploy.yml) run. Local dev: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs).
 
 ## Problem
 
