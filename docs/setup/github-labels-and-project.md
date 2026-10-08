@@ -27,7 +27,7 @@ GitHub CLI needs `read:project` / `project` scope to automate. Create in the UI:
 
 1. Open the repo → **Projects** tab → **New project**
 2. Template: **Board** (or **Team backlog**)
-3. Name: **AI Builder Cup — Sprint**
+3. Name: **Project — Sprint**
 4. Link repository: **project**
 
 ### Recommended columns
@@ -51,7 +51,7 @@ GitHub CLI needs `read:project` / `project` scope to automate. Create in the UI:
 
 ```bash
 gh auth refresh -h github.com -s read:project,project
-gh project create --owner violinadoley --title "AI Builder Cup — Sprint" --format board
+gh project create --owner violinadoley --title "Project — Sprint" --format board
 ```
 
 ---
@@ -59,14 +59,3 @@ gh project create --owner violinadoley --title "AI Builder Cup — Sprint" --for
 ## Branch protection
 
 Configured — see [github-branch-protection.md](./github-branch-protection.md).
-
-## Project board (MANUAL — needs `project` scope on `gh`)
-
-`gh` could not create the board without extra OAuth scopes. Either:
-
-1. **UI (fast):** Repo → **Projects** → **New project** → Board → link **project** repo, columns: Backlog → Ready → In Progress → Code Review → Staging → Done  
-2. **CLI:** Complete device login, then:
-   ```bash
-   gh auth refresh -h github.com -s read:project,project
-   gh project create --owner violinadoley --title "Project — Sprint" --format board
-   ```
