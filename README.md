@@ -83,14 +83,39 @@ Health check: [http://localhost:8000/health](http://localhost:8000/health)
 
 ## Testing
 
+See [docs/development/testing-strategy.md](docs/development/testing-strategy.md).
+
 ```bash
-cd backend && pytest -q
-cd frontend && npm run lint && npm run typecheck
+cd backend && pip install -r requirements-dev.txt
+ruff check app tests && mypy app && pytest -q
+PYTHONPATH=. pytest ../ai-evals/regression -q
+
+cd frontend && npm ci
+npm run lint && npm run typecheck && npm run build
+npm run test:e2e
 ```
+
+## Git workflow
+
+- `main` → production | `develop` → staging
+- Feature branches merge into `develop` via PR ([CONTRIBUTING.md](CONTRIBUTING.md))
+
+## CI/CD
+
+| Workflow | Trigger | Status |
+|----------|---------|--------|
+| [ci.yml](.github/workflows/ci.yml) | PR + push to `main` / `develop` | **AUTOMATED** (in repo) |
+| [deploy-staging.yml](.github/workflows/deploy-staging.yml) | push to `develop` | **MANUAL SETUP REQUIRED** (GCP + GitHub env) |
+| [deploy-production.yml](.github/workflows/deploy-production.yml) | push to `main` | **MANUAL SETUP REQUIRED** + approval |
+
+OIDC setup: [docs/setup/github-google-oidc.md](docs/setup/github-google-oidc.md)
 
 ## Deployment
 
-See [docs/deployment.md](docs/deployment.md) for Cloud Run, secrets, Firebase, and frontend hosting.
+- Overview: [docs/deployment.md](docs/deployment.md)
+- Staging: [docs/deployment/staging.md](docs/deployment/staging.md)
+- Production: [docs/deployment/production.md](docs/deployment/production.md)
+- Rollback: [docs/runbooks/rollback.md](docs/runbooks/rollback.md)
 
 ## Google Cloud Setup
 
@@ -115,9 +140,11 @@ See [docs/deployment.md](docs/deployment.md) for Cloud Run, secrets, Firebase, a
 frontend/          Next.js App Router UI
 backend/app/       FastAPI application
 backend/tests/     Pytest suite
-docs/              Architecture, development, deployment
-scripts/           dev.sh, deploy.sh stub
-.github/workflows/ CI
+docs/              Architecture, ADRs, runbooks, deployment, security
+ai-evals/          AI regression framework (datasets + evaluators)
+infra/             Infra conventions (no Terraform by default)
+scripts/           dev.sh, deploy.sh, smoke-api.sh
+.github/workflows/ CI + staging/production deploy
 ```
 
 ## Future Enhancements

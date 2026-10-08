@@ -1,7 +1,7 @@
 import json
 import logging
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 
@@ -12,11 +12,12 @@ class JsonFormatter(logging.Formatter):
         payload: dict[str, Any] = {
             "severity": record.levelname,
             "message": record.getMessage(),
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "logger": record.name,
         }
-        if hasattr(record, "request_id"):
-            payload["request_id"] = record.request_id  # type: ignore[attr-defined]
+        request_id = getattr(record, "request_id", None)
+        if request_id is not None:
+            payload["request_id"] = request_id
         if record.exc_info:
             payload["exception"] = self.formatException(record.exc_info)
         return json.dumps(payload, default=str)

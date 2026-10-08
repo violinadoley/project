@@ -1,12 +1,11 @@
 import logging
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
-
 from app.core.deps import get_gemini_service, require_user
 from app.core.exceptions import AIGenerationError
 from app.schemas.ai import GenerateRequest, GenerateResponse
 from app.services.ai.base import AIService
+from fastapi import APIRouter, Depends
 
 logger = logging.getLogger(__name__)
 

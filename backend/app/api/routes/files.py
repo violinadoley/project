@@ -1,13 +1,12 @@
 import logging
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, File, UploadFile
-
 from app.core.config import Settings, get_settings
 from app.core.deps import get_storage_service, require_user
 from app.core.exceptions import FileUploadError
 from app.schemas.files import FileUploadResponse
 from app.services.storage.storage_service import ALLOWED_CONTENT_TYPES, StorageService
+from fastapi import APIRouter, Depends, File, UploadFile
 
 logger = logging.getLogger(__name__)
 
@@ -41,15 +40,11 @@ async def upload_file(
 
     content_type = _normalize_content_type(file.content_type, file.filename)
     if content_type not in ALLOWED_CONTENT_TYPES:
-        raise FileUploadError(
-            "Unsupported file type. Allowed: PDF, PNG, JPEG, TXT."
-        )
+        raise FileUploadError("Unsupported file type. Allowed: PDF, PNG, JPEG, TXT.")
 
     data = await file.read()
     if len(data) > settings.max_upload_size_bytes:
-        raise FileUploadError(
-            f"File exceeds maximum size of {settings.max_upload_size_mb} MB."
-        )
+        raise FileUploadError(f"File exceeds maximum size of {settings.max_upload_size_mb} MB.")
 
     if len(data) == 0:
         raise FileUploadError("File is empty.")
