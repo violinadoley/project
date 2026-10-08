@@ -1,10 +1,16 @@
 # GitHub branch protection (`main` + `develop`)
 
-**Status:** MANUAL SETUP REQUIRED on **private** repos with GitHub Free — branch protection rules need [GitHub Pro](https://github.com/pricing), a paid org, or a **public** repository. The API returns:
+**Status: AUTOMATED** for [violinadoley/project](https://github.com/violinadoley/project) (public repo).
 
-`Upgrade to GitHub Pro or make this repository public to enable this feature.`
+Both **`main`** and **`develop`** require:
 
-**AUTOMATED (works on all plans):** CI still runs on every PR via `.github/workflows/ci.yml`. Team discipline + PR template until rules are enabled.
+- A **pull request** before merge (0 approvals configured — solo-friendly; raise to 1 on `main` when you add teammates)
+- **Strict** required status checks: `backend`, `frontend`, `ai-evals`, `e2e`, `secret-scan`
+- No force-push or branch deletion
+
+Admins can bypass (`enforce_admins: false`) so you can still unbreak the repo in an emergency.
+
+Previously, **private repos on GitHub Free** could not use branch protection until Pro or public.
 
 ---
 
@@ -30,7 +36,7 @@ Optional: require the workflow-level check **CI** if your plan shows a single ag
 
 Repeat for **`main`** and **`develop`**.
 
-1. Open **https://github.com/violinadoley/AI-Builder-Cup-/settings/branches**
+1. Open **https://github.com/violinadoley/project/settings/branches**
 2. **Add branch protection rule** (or **Add rule**)
 3. **Branch name pattern:** `main` (then repeat for `develop`)
 4. Enable:

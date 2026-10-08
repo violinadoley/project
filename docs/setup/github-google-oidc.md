@@ -20,7 +20,7 @@ Replace placeholders:
 | `PRODUCTION_PROJECT_ID` | `myapp-prod-456` | Production deploy |
 | `REGION` | `asia-south1` | Artifact Registry + Cloud Run |
 | `GITHUB_ORG` | `violinadoley` | WIF attribute condition |
-| `GITHUB_REPO` | `AI-Builder-Cup-` | WIF attribute condition |
+| `GITHUB_REPO` | `project` | WIF attribute condition |
 
 ## 1. Enable APIs (each project)
 
