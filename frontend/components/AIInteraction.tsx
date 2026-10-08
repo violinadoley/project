@@ -13,6 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
+import { notifyActivityUpdated } from "@/lib/activity-events";
 import { generateAI } from "@/lib/api";
 
 export function AIInteraction() {
@@ -32,6 +33,7 @@ export function AIInteraction() {
     try {
       const text = await generateAI(trimmed);
       setResponse(text);
+      notifyActivityUpdated();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
       setResponse(null);

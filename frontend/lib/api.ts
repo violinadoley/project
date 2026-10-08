@@ -1,4 +1,5 @@
 import type {
+  ActivityListResponse,
   ApiErrorBody,
   FileUploadResponse,
   GenerateAIResponse,
@@ -75,6 +76,23 @@ export async function uploadFile(file: File): Promise<FileUploadResponse> {
   }
 
   return (await response.json()) as FileUploadResponse;
+}
+
+export async function listActivity(limit = 20): Promise<ActivityListResponse["items"]> {
+  const response = await fetch(
+    `${getBaseUrl()}/api/v1/activity?limit=${limit}`,
+    {
+      headers: await buildHeaders(),
+      cache: "no-store",
+    }
+  );
+
+  if (!response.ok) {
+    throw await parseError(response);
+  }
+
+  const data = (await response.json()) as ActivityListResponse;
+  return data.items;
 }
 
 export async function checkHealth(): Promise<boolean> {

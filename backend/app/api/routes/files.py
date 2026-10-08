@@ -2,9 +2,10 @@ import logging
 from typing import Annotated
 
 from app.core.config import Settings, get_settings
-from app.core.deps import get_storage_service, require_user
+from app.core.deps import get_activity_service, get_storage_service, require_user
 from app.core.exceptions import FileUploadError
 from app.schemas.files import FileUploadResponse
+from app.services.firebase.activity_service import ActivityService
 from app.services.storage.storage_service import ALLOWED_CONTENT_TYPES, StorageService
 from fastapi import APIRouter, Depends, File, UploadFile
 
@@ -32,7 +33,8 @@ def _normalize_content_type(content_type: str | None, filename: str) -> str:
 async def upload_file(
     settings: Annotated[Settings, Depends(get_settings)],
     storage: Annotated[StorageService, Depends(get_storage_service)],
-    _user: Annotated[dict | None, Depends(require_user)],
+    user: Annotated[dict | None, Depends(require_user)],
+    activity: Annotated[ActivityService, Depends(get_activity_service)],
     file: UploadFile = File(...),
 ) -> FileUploadResponse:
     if not file.filename:
@@ -53,6 +55,13 @@ async def upload_file(
     logger.info(
         "File validated",
         extra={"file_name": result.filename, "size_bytes": result.size_bytes},
+    )
+    uid = str(user["uid"]) if user and user.get("uid") else None
+    activity.log_file_upload(
+        user_id=uid,
+        filename=result.filename,
+        size_bytes=result.size_bytes,
+        storage_key=result.storage_key,
     )
 
     return FileUploadResponse(

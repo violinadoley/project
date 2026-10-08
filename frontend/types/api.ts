@@ -19,3 +19,19 @@ export type FileUploadResponse = {
   size_bytes: number;
   storage_key: string | null;
 };
+
+export type ActivityType = "ai_generate" | "file_upload";
+
+export type ActivityItem = {
+  id: string;
+  type: ActivityType;
+  title: string;
+  summary?: string | null;
+  user_id?: string | null;
+  created_at?: string | null;
+};
+
+export type ActivityListResponse = {
+  success: true;
+  items: ActivityItem[];
+};

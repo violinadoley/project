@@ -58,15 +58,37 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Resolve Firebase web client env
+        id: firebase_web
+        run: |
+          PROJECT="${{ vars.GCP_PROJECT_ID }}"
+          STORAGE_BUCKET="${{ vars.FIREBASE_STORAGE_BUCKET }}"
+          if [ -z "$STORAGE_BUCKET" ]; then
+            STORAGE_BUCKET="${PROJECT}.firebasestorage.app"
+          fi
+          AUTH_REQUIRED="${{ vars.NEXT_PUBLIC_AUTH_REQUIRED }}"
+          if [ -z "$AUTH_REQUIRED" ]; then
+            AUTH_REQUIRED="${{ vars.AUTH_REQUIRED }}"
+          fi
+          if [ -z "$AUTH_REQUIRED" ]; then
+            AUTH_REQUIRED="false"
+          fi
+          {
+            echo "project_id=${PROJECT}"
+            echo "auth_domain=${PROJECT}.firebaseapp.com"
+            echo "storage_bucket=${STORAGE_BUCKET}"
+            echo "auth_required=${AUTH_REQUIRED}"
+          } >> "$GITHUB_OUTPUT"
+
       - name: Build static site
         run: npm run build
         env:
           NEXT_PUBLIC_API_URL: ${{ vars.PUBLIC_API_URL }}
-          NEXT_PUBLIC_AUTH_REQUIRED: ${{ vars.NEXT_PUBLIC_AUTH_REQUIRED || 'false' }}
+          NEXT_PUBLIC_AUTH_REQUIRED: ${{ steps.firebase_web.outputs.auth_required }}
           NEXT_PUBLIC_FIREBASE_API_KEY: ${{ vars.NEXT_PUBLIC_FIREBASE_API_KEY }}
-          NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: ${{ vars.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN }}
-          NEXT_PUBLIC_FIREBASE_PROJECT_ID: ${{ vars.NEXT_PUBLIC_FIREBASE_PROJECT_ID }}
-          NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: ${{ vars.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET }}
+          NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: ${{ steps.firebase_web.outputs.auth_domain }}
+          NEXT_PUBLIC_FIREBASE_PROJECT_ID: ${{ steps.firebase_web.outputs.project_id }}
+          NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: ${{ steps.firebase_web.outputs.storage_bucket }}
           NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: ${{ vars.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }}
           NEXT_PUBLIC_FIREBASE_APP_ID: ${{ vars.NEXT_PUBLIC_FIREBASE_APP_ID }}
 
@@ -85,4 +107,10 @@ jobs:
         run: |
           SITE="https://${{ vars.GCP_PROJECT_ID }}.web.app"
           echo "::notice title=Frontend (Firebase Hosting)::${SITE}"
-          gh repo edit "${{ github.repository }}" --homepage "$SITE" --description "Hackathon web app (Firebase Hosting)"
+          API_DOCS="${{ vars.BACKEND_API_URL }}"
+          if [ -z "$API_DOCS" ]; then
+            API_DOCS="${{ vars.PUBLIC_API_URL }}/docs"
+          fi
+          gh repo edit "${{ github.repository }}" \
+            --homepage "$SITE" \
+            --description "Web app: ${SITE} · API (Swagger): ${API_DOCS}"

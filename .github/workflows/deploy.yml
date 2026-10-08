@@ -70,14 +70,25 @@ jobs:
       - name: Deploy Cloud Run
         run: |
           CORS_ORIGINS="http://localhost:3000,https://${{ vars.GCP_PROJECT_ID }}.web.app,https://${{ vars.GCP_PROJECT_ID }}.firebaseapp.com"
+          FIREBASE_PROJECT_ID="${{ vars.GCP_PROJECT_ID }}"
+          FIREBASE_STORAGE_BUCKET="${{ vars.FIREBASE_STORAGE_BUCKET }}"
+          if [ -z "$FIREBASE_STORAGE_BUCKET" ]; then
+            FIREBASE_STORAGE_BUCKET="${FIREBASE_PROJECT_ID}.firebasestorage.app"
+          fi
+          AUTH_REQUIRED="${{ vars.AUTH_REQUIRED }}"
+          if [ -z "$AUTH_REQUIRED" ]; then
+            AUTH_REQUIRED="false"
+          fi
           ENV_FILE="$(mktemp)"
           {
             echo "ENVIRONMENT: cloud"
             echo "APP_VERSION: 0.1.0"
             echo "GIT_SHA: ${{ github.sha }}"
             echo "GEMINI_MODEL: gemini-2.5-flash"
-            echo 'AUTH_REQUIRED: "false"'
+            echo "AUTH_REQUIRED: ${AUTH_REQUIRED}"
             echo "CORS_ORIGINS: ${CORS_ORIGINS}"
+            echo "FIREBASE_PROJECT_ID: ${FIREBASE_PROJECT_ID}"
+            echo "FIREBASE_STORAGE_BUCKET: ${FIREBASE_STORAGE_BUCKET}"
           } > "$ENV_FILE"
           gcloud run deploy "${{ env.SERVICE_NAME }}" \
             --project "${{ vars.GCP_PROJECT_ID }}" \
