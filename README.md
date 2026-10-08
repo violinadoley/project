@@ -1,6 +1,6 @@
 # PROJECT_NAME
 
-[Backend API (Swagger UI)](https://ai-hackathon-api-2lcs3sivbq-el.a.run.app/docs) · also on GitHub **About → Website** (opens the API home page with the same link)
+**Web app:** `https://YOUR_GCP_PROJECT_ID.web.app` (Firebase Hosting, free tier) · **API docs:** [Backend API (Swagger)](https://ai-hackathon-api-2lcs3sivbq-el.a.run.app/docs) — see [docs/setup/firebase-hosting.md](docs/setup/firebase-hosting.md)
 
 ## Overview
 
@@ -35,7 +35,7 @@ TODO: Describe the proposed AI solution
 | Backend | Python 3.11+, FastAPI, Uvicorn, Pydantic Settings |
 | AI | Google Gemini (`google-genai`) |
 | Data / Auth | Firebase (Auth, Firestore, Storage) |
-| Deploy | Cloud Run (API), Firebase Hosting / App Hosting (UI) |
+| Deploy | Cloud Run (API), Firebase Hosting (UI, static export) |
 
 ## Architecture
 
@@ -110,9 +110,10 @@ npm run test:e2e
 | Workflow | Trigger | Status |
 |----------|---------|--------|
 | [ci.yml](.github/workflows/ci.yml) | PR + push to `main` / `develop` | **AUTOMATED** (in repo) |
-| [deploy.yml](.github/workflows/deploy.yml) | push to `develop` | **MANUAL SETUP REQUIRED** (GCP + GitHub `gcp` env) |
+| [deploy.yml](.github/workflows/deploy.yml) | push to `develop` | Cloud Run API |
+| [deploy-frontend.yml](.github/workflows/deploy-frontend.yml) | push to `develop` | Firebase Hosting (free) |
 
-OIDC setup: [docs/setup/github-google-oidc.md](docs/setup/github-google-oidc.md)
+Setup: [docs/setup/github-google-oidc.md](docs/setup/github-google-oidc.md) · [docs/setup/firebase-hosting.md](docs/setup/firebase-hosting.md)
 
 ## Deployment
 

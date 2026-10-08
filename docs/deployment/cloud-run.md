@@ -18,12 +18,9 @@ merge PR → develop
 
 ## Frontend
 
-Frontend deploy to Firebase Hosting is **not automated in this starter**. Options:
+Automated: [`.github/workflows/deploy-frontend.yml`](../../.github/workflows/deploy-frontend.yml) → **Firebase Hosting** (Spark/free). See [../setup/firebase-hosting.md](../setup/firebase-hosting.md).
 
-1. Firebase CLI in a follow-up workflow
-2. Manual `firebase deploy` for demos
-
-Set `NEXT_PUBLIC_API_URL` to your Cloud Run URL when you host the UI.
+Set GitHub variable **`PUBLIC_API_URL`** to this Cloud Run base URL (no `/docs` suffix).
 
 ## Configuration
 
