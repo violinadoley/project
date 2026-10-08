@@ -2,30 +2,28 @@
 
 **Status: MANUAL SETUP REQUIRED**
 
-This repository deploy workflows authenticate with **short-lived credentials** via GitHub OIDC and Google Workload Identity Federation (WIF). Do **not** store a service account JSON key in GitHub unless you have documented an unavoidable exception.
+Deploy workflow (`.github/workflows/deploy.yml`) authenticates with **short-lived credentials** via GitHub OIDC and Google Workload Identity Federation (WIF). Do **not** store a service account JSON key in GitHub unless you have documented an unavoidable exception.
 
-Repeat the steps below for **staging** and **production** using **separate GCP projects** (recommended) or clearly separated resources in one project.
+For this hackathon starter, use **one GCP project** for the deployed API.
 
 ## Prerequisites
 
-- GCP projects created (staging + production)
-- Billing enabled (Cloud Run, Artifact Registry incur cost when used)
+- A GCP project with billing enabled (Cloud Run, Artifact Registry incur cost when used)
 - `gcloud` CLI installed and authenticated as a human admin
 
 Replace placeholders:
 
 | Placeholder | Example | Where used |
 |-------------|---------|------------|
-| `STAGING_PROJECT_ID` | `myapp-staging-123` | Staging deploy |
-| `PRODUCTION_PROJECT_ID` | `myapp-prod-456` | Production deploy |
+| `GCP_PROJECT_ID` | `my-hackathon-123` | Deploy + GitHub variable |
 | `REGION` | `asia-south1` | Artifact Registry + Cloud Run |
 | `GITHUB_ORG` | `violinadoley` | WIF attribute condition |
 | `GITHUB_REPO` | `project` | WIF attribute condition |
 
-## 1. Enable APIs (each project)
+## 1. Enable APIs
 
 ```bash
-gcloud config set project STAGING_PROJECT_ID
+gcloud config set project GCP_PROJECT_ID
 gcloud services enable \
   iamcredentials.googleapis.com \
   sts.googleapis.com \
@@ -34,9 +32,7 @@ gcloud services enable \
   secretmanager.googleapis.com
 ```
 
-Repeat for `PRODUCTION_PROJECT_ID`.
-
-## 2. Create Artifact Registry repository (each project)
+## 2. Create Artifact Registry repository
 
 ```bash
 gcloud artifacts repositories create ai-hackathon \
@@ -45,9 +41,9 @@ gcloud artifacts repositories create ai-hackathon \
   --description="API container images"
 ```
 
-Note the repository name for GitHub variable `GCP_ARTIFACT_REPO_STAGING` / `_PRODUCTION` (e.g. `ai-hackathon`).
+Set GitHub variable `GCP_ARTIFACT_REPO` to the repository name (e.g. `ai-hackathon`).
 
-## 3. Create deploy service account (each project)
+## 3. Create deploy service account
 
 ```bash
 gcloud iam service-accounts create github-deploy \
@@ -57,22 +53,22 @@ gcloud iam service-accounts create github-deploy \
 Grant least privilege (adjust if you split frontend deploy):
 
 ```bash
-SA="github-deploy@STAGING_PROJECT_ID.iam.gserviceaccount.com"
-gcloud projects add-iam-policy-binding STAGING_PROJECT_ID \
+SA="github-deploy@GCP_PROJECT_ID.iam.gserviceaccount.com"
+gcloud projects add-iam-policy-binding GCP_PROJECT_ID \
   --member="serviceAccount:${SA}" \
   --role="roles/run.admin"
-gcloud projects add-iam-policy-binding STAGING_PROJECT_ID \
+gcloud projects add-iam-policy-binding GCP_PROJECT_ID \
   --member="serviceAccount:${SA}" \
   --role="roles/artifactregistry.writer"
-gcloud projects add-iam-policy-binding STAGING_PROJECT_ID \
+gcloud projects add-iam-policy-binding GCP_PROJECT_ID \
   --member="serviceAccount:${SA}" \
   --role="roles/iam.serviceAccountUser"
-gcloud projects add-iam-policy-binding STAGING_PROJECT_ID \
+gcloud projects add-iam-policy-binding GCP_PROJECT_ID \
   --member="serviceAccount:${SA}" \
   --role="roles/secretmanager.secretAccessor"
 ```
 
-## 4. Create Workload Identity Pool + Provider (each project)
+## 4. Create Workload Identity Pool + Provider
 
 ```bash
 gcloud iam workload-identity-pools create github-pool \
@@ -83,39 +79,38 @@ gcloud iam workload-identity-pools providers create-oidc github-provider \
   --location=global \
   --workload-identity-pool=github-pool \
   --display-name="GitHub" \
-  --attribute-mapping="google.subject=assertion.sub,attribute.actor=assertion.actor,attribute.repository=assertion.repository" \
+  --attribute-mapping="google.subject=assertion.sub,attribute.repository=assertion.repository" \
+  --attribute-condition="assertion.repository=='GITHUB_ORG/GITHUB_REPO'" \
   --issuer-uri="https://token.actions.githubusercontent.com"
 ```
 
-Restrict which repositories can authenticate:
+If create fails because the provider already exists, delete and retry:
 
 ```bash
-gcloud iam workload-identity-pools providers update-oidc github-provider \
-  --location=global \
-  --workload-identity-pool=github-pool \
-  --attribute-condition="assertion.repository=='GITHUB_ORG/GITHUB_REPO'"
+gcloud iam workload-identity-pools providers delete github-provider \
+  --location=global --workload-identity-pool=github-pool --quiet
 ```
 
 Allow the GitHub identity to impersonate the deploy SA:
 
 ```bash
-PROJECT_NUMBER=$(gcloud projects describe STAGING_PROJECT_ID --format='value(projectNumber)')
+PROJECT_NUMBER=$(gcloud projects describe GCP_PROJECT_ID --format='value(projectNumber)')
 gcloud iam service-accounts add-iam-policy-binding "${SA}" \
   --role="roles/iam.workloadIdentityUser" \
   --member="principalSet://iam.googleapis.com/projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/github-pool/attribute.repository/GITHUB_ORG/GITHUB_REPO"
 ```
 
-## 5. Values for GitHub (repository Variables)
+## 5. GitHub repository Variables
 
 **Settings → Secrets and variables → Actions → Variables**
 
-| Variable | Staging | Production |
-|----------|---------|------------|
-| `GCP_PROJECT_ID_STAGING` / `_PRODUCTION` | project id | project id |
-| `GCP_REGION` | e.g. `asia-south1` | same |
-| `GCP_ARTIFACT_REPO_STAGING` / `_PRODUCTION` | repo name | repo name |
-| `GCP_WIF_PROVIDER_STAGING` / `_PRODUCTION` | full provider resource name | full provider resource name |
-| `GCP_WIF_SERVICE_ACCOUNT_STAGING` / `_PRODUCTION` | `github-deploy@....iam.gserviceaccount.com` | same pattern |
+| Variable | Value |
+|----------|--------|
+| `GCP_PROJECT_ID` | Your GCP project id |
+| `GCP_REGION` | e.g. `asia-south1` |
+| `GCP_ARTIFACT_REPO` | Artifact Registry repo name (e.g. `ai-hackathon`) |
+| `GCP_WIF_PROVIDER` | Full provider resource name (see below) |
+| `GCP_WIF_SERVICE_ACCOUNT` | `github-deploy@GCP_PROJECT_ID.iam.gserviceaccount.com` |
 
 Provider resource name format:
 
@@ -132,36 +127,39 @@ gcloud iam workload-identity-pools providers describe github-provider \
   --format='value(name)'
 ```
 
-## 6. GitHub Environments (MANUAL)
+### Migrating from old `*_STAGING` variable names
 
-**Settings → Environments**
+If you already set `GCP_PROJECT_ID_STAGING`, etc., add the unsuffixed variables above with the same values, merge this rename, then delete the old `*_STAGING` variables.
 
-### `staging`
+## 6. GitHub Environment
 
-- Deployment branches: `develop` only
+**Settings → Environments → create `gcp`**
+
+- Optional: **Deployment branches** → `develop` only
 - Optional: required reviewers for first-time setup
 
-### `production`
+The workflow references `environment: gcp` (not “staging” or “production”).
 
-- Deployment branches: `main` only
-- **Required reviewers** (recommended)
-- Prevent concurrent production deploys (workflow uses `concurrency` group)
-
-Secrets in environments should be **staging-specific** or **production-specific** — never share production Gemini keys with staging.
-
-## 7. Secret Manager (each project)
+## 7. Secret Manager
 
 ```bash
 echo -n "YOUR_GEMINI_API_KEY" | gcloud secrets create GEMINI_API_KEY --data-file=-
 ```
 
-Cloud Run service account (runtime) also needs `secretAccessor` on this secret.
+Cloud Run default compute service account needs `secretAccessor` on this secret:
+
+```bash
+PROJECT_NUMBER=$(gcloud projects describe GCP_PROJECT_ID --format='value(projectNumber)')
+gcloud secrets add-iam-policy-binding GEMINI_API_KEY \
+  --member="serviceAccount:${PROJECT_NUMBER}-compute@developer.gserviceaccount.com" \
+  --role="roles/secretmanager.secretAccessor"
+```
 
 ## 8. Verify
 
-1. Push to `develop` after variables are set → **Deploy Staging** workflow runs.
-2. Check Cloud Run service URL and workflow **Smoke test API** step.
-3. Promote via PR `develop` → `main` → approve **Deploy Production**.
+1. Set all variables and create the `gcp` environment.
+2. Push to `develop` (or run **Deploy API** manually) → workflow builds, deploys `ai-hackathon-api`, runs smoke tests.
+3. Note the Cloud Run URL from the workflow log or Google Cloud Console.
 
 ## Cost note
 
