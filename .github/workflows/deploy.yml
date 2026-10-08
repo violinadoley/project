@@ -15,7 +15,6 @@ concurrency:
 permissions:
   contents: read
   id-token: write
-  administration: write
   actions: write
 
 env:
@@ -101,5 +100,10 @@ jobs:
         run: |
           DOCS_URL="${API_BASE_URL}/docs"
           gh variable set BACKEND_API_URL --body "$DOCS_URL" --repo "${{ github.repository }}"
-          gh repo edit "${{ github.repository }}" --homepage "$API_BASE_URL" --description ""
           echo "::notice title=Backend API (Swagger)::${DOCS_URL}"
+      - name: Update repo About website (optional)
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh repo edit "${{ github.repository }}" --homepage "$API_BASE_URL" --description ""
