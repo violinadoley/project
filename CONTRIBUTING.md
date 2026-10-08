@@ -69,4 +69,7 @@ Version prompts under `backend/app/ai/prompts/`. Update `ai-evals/` when behavio
 - At least one approval from a teammate for non-trivial changes.
 - Security-sensitive or schema changes need explicit review.
 
-See also [SECURITY.md](SECURITY.md) and [docs/development/workflow.md](docs/development/workflow.md).
+See also [SECURITY.md](SECURITY.md), [docs/development/workflow.md](docs/development/workflow.md), and GitHub setup:
+
+- [Branch protection](docs/setup/github-branch-protection.md) (`main` / `develop`, required CI checks)
+- [Labels and project board](docs/setup/github-labels-and-project.md)
