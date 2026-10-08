@@ -82,7 +82,7 @@ jobs:
             --cpu 1 \
             --timeout 60 \
             --concurrency 80 \
-            --set-env-vars "ENVIRONMENT=cloud,APP_VERSION=0.1.0,GIT_SHA=${{ github.sha }},GEMINI_MODEL=gemini-2.5-flash,AUTH_REQUIRED=false,CORS_ORIGINS=${CORS_ORIGINS}" \
+            --set-env-vars "^:^ENVIRONMENT=cloud:APP_VERSION=0.1.0:GIT_SHA=${{ github.sha }}:GEMINI_MODEL=gemini-2.5-flash:AUTH_REQUIRED=false:CORS_ORIGINS=${CORS_ORIGINS}" \
             --set-secrets "GEMINI_API_KEY=GEMINI_API_KEY:latest"
 
       - name: Smoke test API
