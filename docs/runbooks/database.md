@@ -2,17 +2,17 @@
 
 ## Principles
 
-1. **Staging first** — every schema or index change is validated against staging data patterns.
+1. **Cloud project first** — validate schema or index changes against your hackathon Firebase/GCP project before wide rollout.
 2. **Backward compatibility** — prefer additive changes (new fields) over destructive renames.
 3. **No production credentials in dev** — use Firebase Emulator Suite locally when possible.
-4. **Separate projects** — staging and production Firebase/GCP projects must not share credentials.
+4. **Separate from prod elsewhere** — do not use employer or personal production Firebase/GCP credentials for the hackathon app.
 
 ## Change process
 
 1. Document the change in a GitHub Issue and PR (schema section of PR template).
 2. Update Firestore security rules and indexes (`firestore.rules`, `firestore.indexes.json`) in repo when you add Firebase config files.
-3. Deploy rules/indexes to **staging** Firebase project.
-4. Deploy application code to staging Cloud Run; run integration tests.
+3. Deploy rules/indexes to your hackathon Firebase project.
+4. Deploy application code to Cloud Run; run integration tests.
 5. Migrate data if required (batch script, idempotent, logged).
 6. Repeat for production during a release window.
 

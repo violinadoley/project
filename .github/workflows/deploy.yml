@@ -1,15 +1,15 @@
-# MANUAL SETUP REQUIRED: GitHub environment "production" with approval + branch restriction on main.
-# See docs/setup/github-google-oidc.md and docs/deployment/production.md
+# MANUAL SETUP REQUIRED: GitHub environment "gcp", GCP project, WIF, Artifact Registry, Cloud Run.
+# See docs/setup/github-google-oidc.md and docs/deployment/cloud-run.md
 
-name: Deploy Production
+name: Deploy API
 
 on:
   push:
-    branches: [main]
+    branches: [develop]
   workflow_dispatch:
 
 concurrency:
-  group: deploy-production
+  group: deploy-api
   cancel-in-progress: false
 
 permissions:
@@ -17,46 +17,40 @@ permissions:
   id-token: write
 
 env:
-  SERVICE_NAME: ai-hackathon-api-production
+  SERVICE_NAME: ai-hackathon-api
   IMAGE_NAME: ai-hackathon-api
 
 jobs:
   deploy:
-    if: vars.GCP_PROJECT_ID_PRODUCTION != ''
+    # Skips until GitHub Variables are set (see docs/setup/github-google-oidc.md).
+    if: vars.GCP_PROJECT_ID != ''
     runs-on: ubuntu-latest
-    environment: production
+    environment: gcp
     steps:
       - uses: actions/checkout@v4
-
-      - name: Guard branch
-        run: |
-          if [ "${{ github.ref }}" != "refs/heads/main" ]; then
-            echo "Production deploys only from main."
-            exit 1
-          fi
 
       - name: Validate required variables
         run: |
           set -euo pipefail
           for v in GCP_PROJECT_ID GCP_REGION GCP_WIF_PROVIDER GCP_WIF_SERVICE_ACCOUNT GCP_ARTIFACT_REPO; do
             if [ -z "${!v:-}" ]; then
-              echo "::error::Missing repository variable $v (production)."
+              echo "::error::Missing repository variable $v (Settings → Secrets and variables → Actions → Variables)."
               exit 1
             fi
           done
         env:
-          GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID_PRODUCTION }}
+          GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
           GCP_REGION: ${{ vars.GCP_REGION }}
-          GCP_WIF_PROVIDER: ${{ vars.GCP_WIF_PROVIDER_PRODUCTION }}
-          GCP_WIF_SERVICE_ACCOUNT: ${{ vars.GCP_WIF_SERVICE_ACCOUNT_PRODUCTION }}
-          GCP_ARTIFACT_REPO: ${{ vars.GCP_ARTIFACT_REPO_PRODUCTION }}
+          GCP_WIF_PROVIDER: ${{ vars.GCP_WIF_PROVIDER }}
+          GCP_WIF_SERVICE_ACCOUNT: ${{ vars.GCP_WIF_SERVICE_ACCOUNT }}
+          GCP_ARTIFACT_REPO: ${{ vars.GCP_ARTIFACT_REPO }}
 
       - id: auth
         name: Authenticate to Google Cloud (OIDC)
         uses: google-github-actions/auth@v2
         with:
-          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER_PRODUCTION }}
-          service_account: ${{ vars.GCP_WIF_SERVICE_ACCOUNT_PRODUCTION }}
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_WIF_SERVICE_ACCOUNT }}
 
       - uses: google-github-actions/setup-gcloud@v2
 
@@ -67,32 +61,32 @@ jobs:
       - name: Build and push container
         working-directory: backend
         run: |
-          IMAGE="${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID_PRODUCTION }}/${{ vars.GCP_ARTIFACT_REPO_PRODUCTION }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+          IMAGE="${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.GCP_ARTIFACT_REPO }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
           docker build -t "$IMAGE" .
           docker push "$IMAGE"
           echo "IMAGE=$IMAGE" >> "$GITHUB_ENV"
 
-      - name: Deploy Cloud Run (production)
+      - name: Deploy Cloud Run
         run: |
           gcloud run deploy "${{ env.SERVICE_NAME }}" \
-            --project "${{ vars.GCP_PROJECT_ID_PRODUCTION }}" \
+            --project "${{ vars.GCP_PROJECT_ID }}" \
             --region "${{ vars.GCP_REGION }}" \
             --image "$IMAGE" \
             --platform managed \
             --allow-unauthenticated \
             --min-instances 0 \
-            --max-instances 10 \
+            --max-instances 5 \
             --memory 512Mi \
             --cpu 1 \
             --timeout 60 \
             --concurrency 80 \
-            --set-env-vars "ENVIRONMENT=production,APP_VERSION=0.1.0,GIT_SHA=${{ github.sha }},GEMINI_MODEL=gemini-2.5-flash,AUTH_REQUIRED=true" \
+            --set-env-vars "ENVIRONMENT=cloud,APP_VERSION=0.1.0,GIT_SHA=${{ github.sha }},GEMINI_MODEL=gemini-2.5-flash,AUTH_REQUIRED=false" \
             --set-secrets "GEMINI_API_KEY=GEMINI_API_KEY:latest"
 
       - name: Smoke test API
         run: |
           URL=$(gcloud run services describe "${{ env.SERVICE_NAME }}" \
-            --project "${{ vars.GCP_PROJECT_ID_PRODUCTION }}" \
+            --project "${{ vars.GCP_PROJECT_ID }}" \
             --region "${{ vars.GCP_REGION }}" \
             --format 'value(status.url)')
           chmod +x scripts/smoke-api.sh

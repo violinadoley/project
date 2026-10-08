@@ -26,7 +26,7 @@ When configuring **Require status checks**, search for and require these job nam
 | `e2e` | Playwright |
 | `secret-scan` | Tracked secret filename guard |
 
-Do **not** require `deploy` (staging/production deploy workflows) on PRs unless you add a dedicated PR check.
+Do **not** require `deploy` (Deploy API workflow) on PRs unless you add a dedicated PR check.
 
 Optional: require the workflow-level check **CI** if your plan shows a single aggregated check instead of per-job names.
 

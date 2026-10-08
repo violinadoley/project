@@ -9,11 +9,11 @@ This repository does **not** use Terraform by default (team size and hackathon s
 
 ## Resource naming (convention)
 
-| Resource | Staging | Production |
-|----------|---------|------------|
-| Cloud Run API | `ai-hackathon-api-staging` | `ai-hackathon-api-production` |
-| Docker image | `ai-hackathon-api:$GIT_SHA` | same pattern |
-| Artifact Registry repo | `ai-hackathon` (per project) | `ai-hackathon` |
+| Resource | Name |
+|----------|------|
+| Cloud Run API | `ai-hackathon-api` |
+| Docker image | `ai-hackathon-api:$GIT_SHA` |
+| Artifact Registry repo | `ai-hackathon` |
 
 Replace `ai-hackathon` prefix when you rename the product.
 

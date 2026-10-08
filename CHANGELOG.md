@@ -6,11 +6,15 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versio
 
 ## [Unreleased]
 
+### Changed
+
+- Single Cloud Run deploy workflow (`deploy.yml`, GitHub env `gcp`); removed staging/production split and `*_STAGING` variable names
+
 ### Added
 
 - Git branching model (`main` / `develop`) and contributing guide
 - Expanded CI: Ruff, mypy, security scans, AI eval framework tests, Playwright E2E
-- Staging and production deploy workflows (OIDC/WIF — **manual GCP setup required**)
+- Cloud Run deploy workflow (OIDC/WIF — **manual GCP setup required**)
 - Versioned AI layout under `backend/app/ai/`
 - `ai-evals/` regression framework (placeholders)
 - Health `/ready`, environment and version fields on `/health`

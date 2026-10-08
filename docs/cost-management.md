@@ -15,13 +15,13 @@ This project targets **free or low-cost** Google Cloud and GitHub tooling.
 
 ## CI
 
-- AI live calls in CI should stay **mocked** until you add a scheduled staging eval job.
+- AI live calls in CI should stay **mocked** until you add a scheduled cloud eval job.
 - Playwright runs only Chromium in CI.
 
 ## Production
 
 - Require auth in production (`AUTH_REQUIRED=true`) to reduce abuse-driven API cost.
-- Set Cloud Run max instances cap (workflow defaults: staging 5, production 10).
+- Set Cloud Run max instances cap (workflow default: 5).
 
 ## Monitoring spend
 

@@ -8,7 +8,7 @@ Contact the maintainers privately (team email or direct message) with:
 
 - Description and impact
 - Steps to reproduce
-- Affected environment (local / staging / production)
+- Affected environment (local / Cloud Run)
 
 We will acknowledge and coordinate a fix before disclosure when appropriate.
 
@@ -25,7 +25,7 @@ CI includes a basic check for tracked secret-like filenames. This is not a subst
 ## Authentication
 
 - **Local:** `AUTH_REQUIRED=false` is acceptable for development only.
-- **Staging / production:** Enable Firebase Auth and set `AUTH_REQUIRED=true` on the API when exposing public URLs.
+- **Cloud Run:** Enable Firebase Auth and set `AUTH_REQUIRED=true` on the API when exposing public URLs.
 - **GitHub Actions → GCP:** Use [Workload Identity Federation](docs/setup/github-google-oidc.md), not long-lived service account keys in GitHub.
 
 ## Dependencies

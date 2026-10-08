@@ -97,24 +97,23 @@ npm run test:e2e
 
 ## Git workflow
 
-- `main` → production | `develop` → staging
-- Feature branches merge into `develop` via PR ([CONTRIBUTING.md](CONTRIBUTING.md))
+- Feature branches merge into `develop` via PR; **`develop`** triggers Cloud Run deploy
+- **`main`** is the stable branch (no separate prod deploy in this hackathon setup)
+- See [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## CI/CD
 
 | Workflow | Trigger | Status |
 |----------|---------|--------|
 | [ci.yml](.github/workflows/ci.yml) | PR + push to `main` / `develop` | **AUTOMATED** (in repo) |
-| [deploy-staging.yml](.github/workflows/deploy-staging.yml) | push to `develop` | **MANUAL SETUP REQUIRED** (GCP + GitHub env) |
-| [deploy-production.yml](.github/workflows/deploy-production.yml) | push to `main` | **MANUAL SETUP REQUIRED** + approval |
+| [deploy.yml](.github/workflows/deploy.yml) | push to `develop` | **MANUAL SETUP REQUIRED** (GCP + GitHub `gcp` env) |
 
 OIDC setup: [docs/setup/github-google-oidc.md](docs/setup/github-google-oidc.md)
 
 ## Deployment
 
 - Overview: [docs/deployment.md](docs/deployment.md)
-- Staging: [docs/deployment/staging.md](docs/deployment/staging.md)
-- Production: [docs/deployment/production.md](docs/deployment/production.md)
+- Cloud Run: [docs/deployment/cloud-run.md](docs/deployment/cloud-run.md)
 - Rollback: [docs/runbooks/rollback.md](docs/runbooks/rollback.md)
 
 ## Google Cloud Setup
@@ -144,7 +143,7 @@ docs/              Architecture, ADRs, runbooks, deployment, security
 ai-evals/          AI regression framework (datasets + evaluators)
 infra/             Infra conventions (no Terraform by default)
 scripts/           dev.sh, deploy.sh, smoke-api.sh
-.github/workflows/ CI + staging/production deploy
+.github/workflows/ CI + Cloud Run deploy
 ```
 
 ## Future Enhancements

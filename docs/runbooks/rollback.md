@@ -4,21 +4,21 @@
 
 ## Identify current and previous deployment
 
-1. GitHub → **Actions** → **Deploy Production** → note commit SHA of last green deploy.
-2. Cloud Console → **Cloud Run** → `ai-hackathon-api-production` → **Revisions**.
+1. GitHub → **Actions** → **Deploy API** → note commit SHA of last green deploy.
+2. Cloud Console → **Cloud Run** → `ai-hackathon-api` → **Revisions**.
 
 Each revision should correspond to an image tag (`git SHA`).
 
 ## Roll back Cloud Run (API)
 
 ```bash
-gcloud config set project PRODUCTION_PROJECT_ID
-gcloud run services describe ai-hackathon-api-production \
+gcloud config set project GCP_PROJECT_ID
+gcloud run services describe ai-hackathon-api \
   --region REGION \
   --format='yaml(status.traffic,status.latestReadyRevisionName)'
 
 # Route 100% traffic to a previous revision
-gcloud run services update-traffic ai-hackathon-api-production \
+gcloud run services update-traffic ai-hackathon-api \
   --region REGION \
   --to-revisions REVISION_NAME=100
 ```
@@ -26,7 +26,7 @@ gcloud run services update-traffic ai-hackathon-api-production \
 Or redeploy a known-good image:
 
 ```bash
-gcloud run deploy ai-hackathon-api-production \
+gcloud run deploy ai-hackathon-api \
   --region REGION \
   --image REGION-docker.pkg.dev/PROJECT/REPO/ai-hackathon-api:GOOD_SHA
 ```
@@ -42,7 +42,7 @@ Firestore schema changes are **not** automatically rolled back with Cloud Run. I
 
 1. Stop traffic to bad revision.
 2. Deploy fixed application code forward-fixing reads.
-3. Run a one-off migration script against staging first.
+3. Run a one-off migration script against the hackathon GCP project first.
 
 See [database.md](database.md).
 
