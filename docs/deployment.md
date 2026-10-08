@@ -2,6 +2,12 @@
 
 Replace placeholder project IDs and regions with your own values. Do not commit secrets.
 
+**Automated deploy workflows (after GCP setup):**
+
+- [Staging (`develop`)](deployment/staging.md) — `.github/workflows/deploy-staging.yml`
+- [Production (`main`)](deployment/production.md) — `.github/workflows/deploy-production.yml`
+- [GitHub OIDC → GCP](setup/github-google-oidc.md) — **MANUAL SETUP REQUIRED**
+
 ## 1. Google Cloud project
 
 1. Create or select a project in [Google Cloud Console](https://console.cloud.google.com/).

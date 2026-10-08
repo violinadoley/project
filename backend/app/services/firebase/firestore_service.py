@@ -34,18 +34,17 @@ class FirestoreService:
             ref.set(data)
             return document_id
         ref = db.collection(collection).add(data)
-        return ref[1].id
+        return str(ref[1].id)
 
     def get_document(self, collection: str, document_id: str) -> dict[str, Any] | None:
         db = self._client()
         snap = db.collection(collection).document(document_id).get()
         if not snap.exists:
             return None
-        return snap.to_dict()
+        data = snap.to_dict()
+        return data if data is None else dict(data)
 
-    def update_document(
-        self, collection: str, document_id: str, data: dict[str, Any]
-    ) -> None:
+    def update_document(self, collection: str, document_id: str, data: dict[str, Any]) -> None:
         db = self._client()
         db.collection(collection).document(document_id).update(data)
 
@@ -53,9 +52,7 @@ class FirestoreService:
         db = self._client()
         db.collection(collection).document(document_id).delete()
 
-    def list_documents(
-        self, collection: str, limit: int = 50
-    ) -> list[dict[str, Any]]:
+    def list_documents(self, collection: str, limit: int = 50) -> list[dict[str, Any]]:
         db = self._client()
         docs = db.collection(collection).limit(limit).stream()
         return [{"id": d.id, **d.to_dict()} for d in docs]

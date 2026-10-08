@@ -54,9 +54,7 @@ class StorageService:
                 logger.exception("Storage upload failed; returning metadata only")
                 storage_key = None
         else:
-            logger.debug(
-                "Storage not configured; metadata-only upload (TODO: enable GCS)."
-            )
+            logger.debug("Storage not configured; metadata-only upload (TODO: enable GCS).")
 
         return UploadResult(
             storage_key=storage_key,

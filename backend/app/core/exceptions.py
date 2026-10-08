@@ -27,9 +27,7 @@ class ValidationError(AppException):
 
 
 class AIGenerationError(AppException):
-    def __init__(
-        self, message: str = "Unable to generate a response."
-    ) -> None:
+    def __init__(self, message: str = "Unable to generate a response.") -> None:
         super().__init__("AI_GENERATION_ERROR", message, status_code=502)
 
 

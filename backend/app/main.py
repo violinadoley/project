@@ -1,17 +1,22 @@
 import logging
 from contextlib import asynccontextmanager
-from typing import Any
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+
 from app.api.router import api_router
 from app.core.config import get_settings
 from app.core.exceptions import AppException
 from app.core.logging import setup_logging
 from app.middleware.request_logging import RequestLoggingMiddleware
-from app.schemas.common import ErrorDetail, ErrorResponse, HealthResponse
+from app.schemas.common import (
+    ErrorDetail,
+    ErrorResponse,
+    HealthResponse,
+    ReadyResponse,
+)
 from app.services.firebase.admin import init_firebase
 
 logger = logging.getLogger(__name__)
@@ -71,23 +76,30 @@ def create_app() -> FastAPI:
         return JSONResponse(status_code=422, content=body.model_dump())
 
     @app.exception_handler(Exception)
-    async def unhandled_exception_handler(
-        request: Request, exc: Exception
-    ) -> JSONResponse:
+    async def unhandled_exception_handler(request: Request, exc: Exception) -> JSONResponse:
         logger.exception("Unhandled error on %s", request.url.path)
-        message = (
-            "An unexpected error occurred."
-            if settings.is_production
-            else str(exc)
-        )
-        body = ErrorResponse(
-            error=ErrorDetail(code="INTERNAL_ERROR", message=message)
-        )
+        message = "An unexpected error occurred." if settings.is_production else str(exc)
+        body = ErrorResponse(error=ErrorDetail(code="INTERNAL_ERROR", message=message))
         return JSONResponse(status_code=500, content=body.model_dump())
+
+    def _health_payload() -> dict[str, str]:
+        return {
+            "status": "ok",
+            "environment": settings.environment,
+            "version": settings.app_version,
+        }
 
     @app.get("/health", response_model=HealthResponse, tags=["health"])
     def root_health() -> HealthResponse:
-        return HealthResponse(status="ok")
+        return HealthResponse(**_health_payload())
+
+    @app.get("/ready", response_model=ReadyResponse, tags=["health"])
+    def readiness() -> ReadyResponse:
+        return ReadyResponse(
+            status="ready",
+            environment=settings.environment,
+            version=settings.app_version,
+        )
 
     app.include_router(api_router, prefix="/api/v1")
     return app
