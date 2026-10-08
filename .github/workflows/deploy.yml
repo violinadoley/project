@@ -85,7 +85,7 @@ jobs:
             echo "APP_VERSION: 0.1.0"
             echo "GIT_SHA: ${{ github.sha }}"
             echo "GEMINI_MODEL: gemini-2.5-flash"
-            echo "AUTH_REQUIRED: ${AUTH_REQUIRED}"
+            echo "AUTH_REQUIRED: \"${AUTH_REQUIRED}\""
             echo "CORS_ORIGINS: ${CORS_ORIGINS}"
             echo "FIREBASE_PROJECT_ID: ${FIREBASE_PROJECT_ID}"
             echo "FIREBASE_STORAGE_BUCKET: ${FIREBASE_STORAGE_BUCKET}"
