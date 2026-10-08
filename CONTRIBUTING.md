@@ -4,18 +4,18 @@ Thank you for helping build this project. We optimize for a small team, clear re
 
 ## Branching
 
-| Branch | Environment | Purpose |
-|--------|-------------|---------|
-| `main` | Production | Release-ready code only |
-| `develop` | Staging | Integration branch |
-| `feature/*`, `fix/*`, … | Local / PR | All day-to-day work |
+| Branch | Purpose |
+|--------|---------|
+| `main` | Stable / release-ready (no separate cloud deploy) |
+| `develop` | Integration; merges here deploy to Cloud Run |
+| `feature/*`, `fix/*`, … | Day-to-day work via PR |
 
 **Rules**
 
 1. Do not commit directly to `main` or `develop` (except documented emergencies).
 2. Branch from `develop` for features and fixes.
 3. Open a Pull Request into `develop`.
-4. Merge `develop` → `main` via release PR after staging QA.
+4. Optionally merge `develop` → `main` when you want the stable branch to match what you demoed on Cloud Run.
 
 Example:
 
@@ -69,4 +69,7 @@ Version prompts under `backend/app/ai/prompts/`. Update `ai-evals/` when behavio
 - At least one approval from a teammate for non-trivial changes.
 - Security-sensitive or schema changes need explicit review.
 
-See also [SECURITY.md](SECURITY.md) and [docs/development/workflow.md](docs/development/workflow.md).
+See also [SECURITY.md](SECURITY.md), [docs/development/workflow.md](docs/development/workflow.md), and GitHub setup:
+
+- [Branch protection](docs/setup/github-branch-protection.md) (`main` / `develop`, required CI checks)
+- [Labels and project board](docs/setup/github-labels-and-project.md)

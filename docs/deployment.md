@@ -2,10 +2,9 @@
 
 Replace placeholder project IDs and regions with your own values. Do not commit secrets.
 
-**Automated deploy workflows (after GCP setup):**
+**Automated deploy (after GCP setup):**
 
-- [Staging (`develop`)](deployment/staging.md) — `.github/workflows/deploy-staging.yml`
-- [Production (`main`)](deployment/production.md) — `.github/workflows/deploy-production.yml`
+- [Cloud Run API (`develop`)](deployment/cloud-run.md) — `.github/workflows/deploy.yml`
 - [GitHub OIDC → GCP](setup/github-google-oidc.md) — **MANUAL SETUP REQUIRED**
 
 ## 1. Google Cloud project

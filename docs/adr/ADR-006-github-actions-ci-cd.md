@@ -6,7 +6,7 @@ Team uses GitHub; want native PR checks and deploys without extra SaaS.
 
 ## Decision
 
-**GitHub Actions** for CI, staging deploy (`develop`), production deploy (`main`) with **OIDC → GCP WIF**.
+**GitHub Actions** for CI and Cloud Run deploy (`develop` → **Deploy API**) with **OIDC → GCP WIF**.
 
 ## Alternatives considered
 
