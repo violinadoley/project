@@ -14,7 +14,14 @@ Production-quality **starter monorepo** for a Google-native AI hackathon project
 
 Replace placeholders (`PROJECT_NAME`, problem statement, domain logic) after your team selects a competition track.
 
-Repo variable `BACKEND_API_URL` holds the Swagger URL after each [**Deploy API**](.github/workflows/deploy.yml) run. Local dev: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs).
+**GitHub Actions variables** (see [docs/security-defaults.md](docs/security-defaults.md)):
+
+| Variable | Purpose |
+|----------|---------|
+| `PUBLIC_API_URL` | Cloud Run **base URL** (no `/docs`) — baked into the frontend as `NEXT_PUBLIC_API_URL` |
+| `BACKEND_API_URL` | **Swagger** URL (`…/docs`) — updated after Deploy API for humans / README links |
+
+Local API docs: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs).
 
 ## Problem
 
@@ -67,7 +74,9 @@ Or run `./scripts/dev.sh` for instructions.
 
 **Backend** (`backend/.env`): `GEMINI_API_KEY`, `GEMINI_MODEL`, `FIREBASE_PROJECT_ID`, `FIREBASE_STORAGE_BUCKET`, `AUTH_REQUIRED`, `MAX_UPLOAD_SIZE_MB`, `CORS_ORIGINS`, etc. See [backend/.env.example](backend/.env.example).
 
-**Frontend** (`frontend/.env.local`): `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_FIREBASE_*`, `NEXT_PUBLIC_AUTH_REQUIRED`. See [frontend/.env.local.example](frontend/.env.local.example).
+**Frontend** (`frontend/.env.local`): `NEXT_PUBLIC_API_URL` (same meaning as `PUBLIC_API_URL`), `NEXT_PUBLIC_FIREBASE_*`, `NEXT_PUBLIC_AUTH_REQUIRED`. See [frontend/.env.local.example](frontend/.env.local.example).
+
+Security defaults (auth, public API, CI gates): [docs/security-defaults.md](docs/security-defaults.md).
 
 ## Running Frontend
 
