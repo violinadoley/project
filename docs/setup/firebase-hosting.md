@@ -29,6 +29,8 @@ gcloud projects add-iam-policy-binding "$PROJECT_ID" \
   --role="roles/firebasehosting.admin"
 ```
 
+Firestore/Storage **security rules** deploy in a second workflow job. Grant the same service account the rules roles in [firebase-backend.md](./firebase-backend.md#2-gcp-apis-and-cloud-run-service-account) so **Deploy Frontend** is fully green; otherwise Hosting still deploys but the workflow fails until rules IAM or the manual release checklist is satisfied.
+
 ## 3. GitHub repository variables
 
 **Settings → Secrets and variables → Actions → Variables**
@@ -48,9 +50,10 @@ Workflow: [`.github/workflows/deploy-frontend.yml`](../../.github/workflows/depl
 
 ## 4. Verify
 
-1. Merge to `develop` → **Deploy Frontend** and **Deploy API** run.
-2. Open `https://YOUR_PROJECT_ID.web.app` → **Dashboard** → send a test message (hits Cloud Run via `NEXT_PUBLIC_API_URL`).
-3. If the browser blocks requests, confirm **Deploy API** set `CORS_ORIGINS` to include `.web.app` and `.firebaseapp.com`.
+1. Merge to `develop` → **Deploy Frontend** (jobs **deploy-hosting** + **deploy-firebase-rules**) and **Deploy API** run.
+2. In Actions, confirm **deploy-hosting** succeeded; if **deploy-firebase-rules** failed with `403`, complete the [rules release checklist](./firebase-backend.md#release-checklist-firebase-rules) or add rules IAM on `github-deploy@…`.
+3. Open `https://YOUR_PROJECT_ID.web.app` → **Dashboard** → send a test message (hits Cloud Run via `NEXT_PUBLIC_API_URL`).
+4. If the browser blocks requests, confirm **Deploy API** set `CORS_ORIGINS` to include `.web.app` and `.firebaseapp.com`.
 
 ## Local static preview
 

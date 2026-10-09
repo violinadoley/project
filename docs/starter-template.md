@@ -8,7 +8,7 @@ This document marks the **infrastructure starter** as complete. Competition-spec
 |------------|--------|
 | CI (lint, test, security, e2e) | `.github/workflows/ci.yml` |
 | API deploy (Cloud Run + WIF) | `.github/workflows/deploy.yml` |
-| UI deploy (Firebase Hosting) | `.github/workflows/deploy-frontend.yml` |
+| UI deploy (Firebase Hosting + rules) | `.github/workflows/deploy-frontend.yml` (`deploy-hosting`, `deploy-firebase-rules`) |
 | Gemini HTTP API | `POST /api/v1/ai/generate` |
 | File upload + GCS | `POST /api/v1/files/upload` |
 | Activity feed | `GET /api/v1/activity`, dashboard **Recent activity** |
@@ -30,4 +30,4 @@ This document marks the **infrastructure starter** as complete. Competition-spec
 
 ## Version
 
-Starter baseline: **v0.2.1** (see [CHANGELOG](../CHANGELOG.md)).
+Starter baseline: **v1.0.0** (see [CHANGELOG](../CHANGELOG.md)).
