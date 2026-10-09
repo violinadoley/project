@@ -1,9 +1,11 @@
 # PROJECT_NAME
 
+**Starter release:** [v1.0.0](https://github.com/violinadoley/project/releases/tag/v1.0.0) — platform complete; customize below for your competition entry.
+
 | | |
 |---|---|
 | **Live app** | [Open dashboard](https://project-bf77a013-c0b3-413c-a75.web.app/dashboard) |
-| **API (Swagger)** | [Backend docs](https://ai-hackathon-api-2lcs3sivbq-el.a.run.app/docs) |
+| **API (Swagger)** | Set `BACKEND_API_URL` in GitHub Variables (updated each Deploy API) or use your Cloud Run `/docs` URL |
 | **Starter guide** | [docs/starter-template.md](docs/starter-template.md) |
 
 Replace `PROJECT_NAME` and URLs when you fork for your own GCP project. Setup: [firebase-hosting.md](docs/setup/firebase-hosting.md).

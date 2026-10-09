@@ -51,7 +51,7 @@ Workflow: [`.github/workflows/deploy-frontend.yml`](../../.github/workflows/depl
 ## 4. Verify
 
 1. Merge to `develop` → **Deploy Frontend** (jobs **deploy-hosting** + **deploy-firebase-rules**) and **Deploy API** run.
-2. In Actions, confirm **deploy-hosting** succeeded; if **deploy-firebase-rules** failed with `403`, complete the [rules release checklist](./firebase-backend.md#release-checklist-firebase-rules) or add rules IAM on `github-deploy@…`.
+2. In Actions, confirm **deploy-hosting** and **deploy-firebase-rules** succeeded; on failure, see [fallback rules steps](./firebase-backend.md#fallback-firebase-rules-if-ci-fails) or add IAM on `github-deploy@…`.
 3. Open `https://YOUR_PROJECT_ID.web.app` → **Dashboard** → send a test message (hits Cloud Run via `NEXT_PUBLIC_API_URL`).
 4. If the browser blocks requests, confirm **Deploy API** set `CORS_ORIGINS` to include `.web.app` and `.firebaseapp.com`.
 

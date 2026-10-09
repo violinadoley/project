@@ -68,7 +68,15 @@ gcloud projects add-iam-policy-binding GCP_PROJECT_ID \
   --role="roles/secretmanager.secretAccessor"
 ```
 
-## 4. Create Workload Identity Pool + Provider
+**Firebase Hosting + rules** (same `github-deploy@…` service account): also grant `roles/firebasehosting.admin`, `roles/firebaserules.admin`, `roles/serviceusage.serviceUsageConsumer`, and `roles/firebasestorage.viewer`. Copy-paste commands in [firebase-backend.md](./firebase-backend.md#2-gcp-apis-and-cloud-run-service-account).
+
+## 4. GitHub Actions token (repo metadata)
+
+Deploy workflows update the repository **Website** link and `BACKEND_API_URL` variable using `GITHUB_TOKEN`.
+
+**Settings → Actions → General → Workflow permissions** → enable **Read and write permissions** (or allow `contents: write` and `actions: write` for workflows that need them). Without this, `gh repo edit` / `gh variable set` return HTTP 403.
+
+## 5. Create Workload Identity Pool + Provider
 
 ```bash
 gcloud iam workload-identity-pools create github-pool \
@@ -100,7 +108,7 @@ gcloud iam service-accounts add-iam-policy-binding "${SA}" \
   --member="principalSet://iam.googleapis.com/projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/github-pool/attribute.repository/GITHUB_ORG/GITHUB_REPO"
 ```
 
-## 5. GitHub repository Variables
+## 6. GitHub repository Variables
 
 **Settings → Secrets and variables → Actions → Variables**
 
@@ -131,7 +139,7 @@ gcloud iam workload-identity-pools providers describe github-provider \
 
 If you already set `GCP_PROJECT_ID_STAGING`, etc., add the unsuffixed variables above with the same values, merge this rename, then delete the old `*_STAGING` variables.
 
-## 6. GitHub Environment
+## 7. GitHub Environment
 
 **Settings → Environments → create `gcp`**
 
@@ -140,7 +148,7 @@ If you already set `GCP_PROJECT_ID_STAGING`, etc., add the unsuffixed variables 
 
 The workflow references `environment: gcp` (not “staging” or “production”).
 
-## 7. Secret Manager
+## 8. Secret Manager
 
 ```bash
 echo -n "YOUR_GEMINI_API_KEY" | gcloud secrets create GEMINI_API_KEY --data-file=-
@@ -155,7 +163,7 @@ gcloud secrets add-iam-policy-binding GEMINI_API_KEY \
   --role="roles/secretmanager.secretAccessor"
 ```
 
-## 8. Verify
+## 9. Verify
 
 1. Set all variables and create the `gcp` environment.
 2. Push to `develop` (or run **Deploy API** manually) → workflow builds, deploys `ai-hackathon-api`, runs smoke tests.

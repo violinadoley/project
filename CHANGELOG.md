@@ -8,6 +8,11 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versio
 
 _Competition-specific product work._
 
+### Changed
+
+- Deploy workflows: `contents: write` for repo homepage; no `continue-on-error` on publish steps
+- Docs: GitHub token permissions, PostHog key rotation, Firebase rules fallback (CI is primary)
+
 ## [1.0.0] - 2026-10-09
 
 First release of the **AI hackathon starter** — Google-native platform (Next.js, FastAPI, Gemini, Firebase, Cloud Run) ready for competition-specific features.
