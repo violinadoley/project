@@ -64,4 +64,4 @@ Optional. See [setup/posthog.md](setup/posthog.md). When enabled, events are **m
 - [ ] Confirm no secrets in git (`gitleaks` green).
 - [ ] Firebase rules: CI **deploy-firebase-rules** green after each rules change, or [fallback checklist](setup/firebase-backend.md#fallback-firebase-rules-if-ci-fails).
 - [ ] PostHog: rotate project key if it was pasted in chat — see [posthog.md](setup/posthog.md#rotate-a-compromised-key).
-- [ ] GitHub **Workflow permissions**: Read and write (for deploy homepage + `BACKEND_API_URL` updates) — [github-google-oidc.md](setup/github-google-oidc.md#4-github-actions-token-repo-metadata).
+- [ ] GitHub **Website** + `BACKEND_API_URL` set — [scripts/set-github-repo-links.sh](../scripts/set-github-repo-links.sh) or Deploy API notice; [github-google-oidc.md](setup/github-google-oidc.md#4-github-repo-links-website--swagger-variable).
