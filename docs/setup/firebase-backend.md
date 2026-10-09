@@ -6,7 +6,7 @@ Use the **same GCP project** as Cloud Run (`GCP_PROJECT_ID`). The API uses the *
 
 1. [Firebase Console](https://console.firebase.google.com/) → your project.
 2. **Build → Firestore Database → Create database** → start in **production mode** (API uses Admin SDK; clients use your FastAPI routes, not direct Firestore reads). Deploy **`frontend/firestore.rules`** and **`frontend/storage.rules`** (deny all client access) via **Deploy Frontend** or `firebase deploy --only firestore:rules,storage` from `frontend/`.
-3. **Build → Storage → Get started** — note the bucket name (often `YOUR_PROJECT_ID.firebasestorage.app`).
+3. **Build → Storage → Get started** — finish setup (required for CI Storage rules deploy). Note the bucket name (often `YOUR_PROJECT_ID.firebasestorage.app`).
 4. **Build → Authentication → Get started → Sign-in method → Google → Enable**.
 5. **Project settings → Your apps → Add app → Web** — register a web app (required for client login). Copy **apiKey** and **appId** for GitHub variables below.
 
@@ -36,11 +36,43 @@ gcloud projects add-iam-policy-binding "$PROJECT_ID" \
 
 For **GitHub Actions** (Firebase Hosting + rules deploy), grant the WIF deploy service account (e.g. `github-deploy@…`) at least:
 
-- `roles/firebasehosting.admin`
-- `roles/datastore.indexAdmin` (Firestore rules)
+- `roles/firebasehosting.admin` (Hosting)
+- `roles/firebaserules.admin` (Firestore rules test/deploy)
 - `roles/serviceusage.serviceUsageConsumer` (Storage rules deploy via Firebase CLI)
+- `roles/firebasestorage.viewer` (resolve default Storage bucket — `firebasestorage.defaultBucket.get`)
 
-If Storage rules deploy fails in CI, paste `frontend/storage.rules` in **Firebase Console → Storage → Rules** once.
+```bash
+export PROJECT_ID=YOUR_GCP_PROJECT_ID
+export SA="github-deploy@${PROJECT_ID}.iam.gserviceaccount.com"
+
+gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+  --member="serviceAccount:${SA}" \
+  --role="roles/firebaserules.admin"
+
+gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+  --member="serviceAccount:${SA}" \
+  --role="roles/serviceusage.serviceUsageConsumer"
+
+gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+  --member="serviceAccount:${SA}" \
+  --role="roles/firebasestorage.viewer"
+```
+
+**Deploy Frontend** runs two jobs: **deploy-hosting** (required) and **deploy-firebase-rules** (required for a green workflow). If the rules job fails with `403`, the workflow is **failed** even though Hosting may already be live—check the **deploy-firebase-rules** job logs, not only the workflow summary.
+
+Grant the roles above to `github-deploy@…` so CI can deploy rules. Until that job is green, use the [release checklist](#release-checklist-firebase-rules) whenever you change `frontend/firestore.rules` or `frontend/storage.rules`.
+
+## Release checklist (Firebase rules)
+
+Required until **Deploy Frontend → deploy-firebase-rules** succeeds in GitHub Actions (no `403` on `firebaserules.googleapis.com`, `serviceusage.googleapis.com`, or `firebasestorage.googleapis.com`):
+
+1. After merging changes to `frontend/firestore.rules` or `frontend/storage.rules`, open [Firebase Console](https://console.firebase.google.com/) → your project.
+2. **Firestore → Rules** — paste from `frontend/firestore.rules` → **Publish**.
+3. **Storage → Rules** — paste from `frontend/storage.rules` → **Publish**.
+4. Confirm both match the repo (deny-all client access: `allow read, write: if false`).
+5. After IAM is fixed, re-run **Deploy Frontend** and confirm **deploy-firebase-rules** is green so this checklist can be retired for that project.
+
+If CI logs say **Firebase Storage has not been set up**, open **Build → Storage** in the Firebase Console and complete **Get started** (even if rules were pasted manually). The deploy workflow pins the bucket from `FIREBASE_STORAGE_BUCKET` or `{GCP_PROJECT_ID}.firebasestorage.app`.
 
 If Firestore is not created yet:
 
