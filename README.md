@@ -1,6 +1,12 @@
 # PROJECT_NAME
 
-**Web app:** `https://YOUR_GCP_PROJECT_ID.web.app` (Firebase Hosting, free tier) · **API docs:** [Backend API (Swagger)](https://ai-hackathon-api-2lcs3sivbq-el.a.run.app/docs) — see [docs/setup/firebase-hosting.md](docs/setup/firebase-hosting.md)
+| | |
+|---|---|
+| **Live app** | [Open dashboard](https://project-bf77a013-c0b3-413c-a75.web.app/dashboard) |
+| **API (Swagger)** | [Backend docs](https://ai-hackathon-api-2lcs3sivbq-el.a.run.app/docs) |
+| **Starter guide** | [docs/starter-template.md](docs/starter-template.md) |
+
+Replace `PROJECT_NAME` and URLs when you fork for your own GCP project. Setup: [firebase-hosting.md](docs/setup/firebase-hosting.md).
 
 ## Overview
 
@@ -8,7 +14,14 @@ Production-quality **starter monorepo** for a Google-native AI hackathon project
 
 Replace placeholders (`PROJECT_NAME`, problem statement, domain logic) after your team selects a competition track.
 
-Repo variable `BACKEND_API_URL` holds the Swagger URL after each [**Deploy API**](.github/workflows/deploy.yml) run. Local dev: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs).
+**GitHub Actions variables** (see [docs/security-defaults.md](docs/security-defaults.md)):
+
+| Variable | Purpose |
+|----------|---------|
+| `PUBLIC_API_URL` | Cloud Run **base URL** (no `/docs`) — baked into the frontend as `NEXT_PUBLIC_API_URL` |
+| `BACKEND_API_URL` | **Swagger** URL (`…/docs`) — updated after Deploy API for humans / README links |
+
+Local API docs: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs).
 
 ## Problem
 
@@ -61,7 +74,9 @@ Or run `./scripts/dev.sh` for instructions.
 
 **Backend** (`backend/.env`): `GEMINI_API_KEY`, `GEMINI_MODEL`, `FIREBASE_PROJECT_ID`, `FIREBASE_STORAGE_BUCKET`, `AUTH_REQUIRED`, `MAX_UPLOAD_SIZE_MB`, `CORS_ORIGINS`, etc. See [backend/.env.example](backend/.env.example).
 
-**Frontend** (`frontend/.env.local`): `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_FIREBASE_*`, `NEXT_PUBLIC_AUTH_REQUIRED`. See [frontend/.env.local.example](frontend/.env.local.example).
+**Frontend** (`frontend/.env.local`): `NEXT_PUBLIC_API_URL` (same meaning as `PUBLIC_API_URL`), `NEXT_PUBLIC_FIREBASE_*`, `NEXT_PUBLIC_AUTH_REQUIRED`. See [frontend/.env.local.example](frontend/.env.local.example).
+
+Security defaults (auth, public API, CI gates): [docs/security-defaults.md](docs/security-defaults.md).
 
 ## Running Frontend
 

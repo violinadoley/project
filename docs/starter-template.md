@@ -13,6 +13,7 @@ This document marks the **infrastructure starter** as complete. Competition-spec
 | File upload + GCS | `POST /api/v1/files/upload` |
 | Activity feed | `GET /api/v1/activity`, dashboard **Recent activity** |
 | Google sign-in | Firebase Auth + optional `AUTH_REQUIRED` |
+| Security policy | [security-defaults.md](security-defaults.md), Gitleaks + pip-audit in CI |
 
 ## First-time GCP / GitHub setup
 
