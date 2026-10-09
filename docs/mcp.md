@@ -1,8 +1,8 @@
-# MCP development environment
+# Optional MCP setup (local development)
 
-Project-level MCP configuration: [`.cursor/mcp.json`](../.cursor/mcp.json)
+**Not shipped to users.** This is for developers who want IDE-integrated tools (GitHub, GCP, Firebase, etc.) while working on the repo.
 
-Cursor merges this file with your global `~/.cursor/mcp.json`. **Do not commit secrets**—use OAuth or `${env:VAR}` interpolation only.
+Example config: [`.cursor/mcp.json`](../.cursor/mcp.json) (merge with your editor’s global MCP settings). **Do not commit secrets**—use OAuth or `${env:VAR}` interpolation only.
 
 Official references:
 

@@ -27,6 +27,15 @@ git checkout -b feature/my-change
 gh pr create --base develop
 ```
 
+## Git author (submission repos)
+
+Commit and merge under **your GitHub account** (`violinadoley` / your noreply email). Avoid leaving bot or IDE integration accounts as the primary author on `main`/`develop` so the repository **Contributors** list reflects your team.
+
+```bash
+git config user.name "Your Name"
+git config user.email "you@users.noreply.github.com"
+```
+
 ## Pull requests
 
 Use the [PR template](.github/pull_request_template.md). CI must pass before merge.
