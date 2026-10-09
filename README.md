@@ -1,6 +1,12 @@
 # PROJECT_NAME
 
-**Web app:** `https://YOUR_GCP_PROJECT_ID.web.app` (Firebase Hosting, free tier) · **API docs:** [Backend API (Swagger)](https://ai-hackathon-api-2lcs3sivbq-el.a.run.app/docs) — see [docs/setup/firebase-hosting.md](docs/setup/firebase-hosting.md)
+| | |
+|---|---|
+| **Live app** | [Open dashboard](https://project-bf77a013-c0b3-413c-a75.web.app/dashboard) |
+| **API (Swagger)** | [Backend docs](https://ai-hackathon-api-2lcs3sivbq-el.a.run.app/docs) |
+| **Starter guide** | [docs/starter-template.md](docs/starter-template.md) |
+
+Replace `PROJECT_NAME` and URLs when you fork for your own GCP project. Setup: [firebase-hosting.md](docs/setup/firebase-hosting.md).
 
 ## Overview
 
