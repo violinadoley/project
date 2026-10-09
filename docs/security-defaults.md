@@ -53,5 +53,5 @@ Optional. See [setup/posthog.md](setup/posthog.md). When enabled, events are **m
 
 - [ ] Decide auth policy (`AUTH_REQUIRED` / public API).
 - [ ] Confirm no secrets in git (`gitleaks` green).
-- [ ] Review Firebase Storage rules and Firestore (Admin-only access from API is the model today).
+- [ ] Firebase rules match repo: CI **deploy-firebase-rules** green, or [manual release checklist](setup/firebase-backend.md#release-checklist-firebase-rules) completed.
 - [ ] Rotate any key that was ever pasted in chat or committed by mistake.
