@@ -31,6 +31,8 @@ gh pr create --base develop
 
 Commit and merge under **your GitHub account** (`violinadoley` / your noreply email). Avoid leaving bot or IDE integration accounts as the primary author on `main`/`develop` so the repository **Contributors** list reflects your team.
 
+**Do not** add `Co-authored-by: Cursor <cursoragent@cursor.com>` to commit messages — GitHub lists co-authors as **Contributors**. In Cursor, turn off automatic co-author trailers for commits you push here.
+
 ```bash
 git config user.name "Your Name"
 git config user.email "you@users.noreply.github.com"
