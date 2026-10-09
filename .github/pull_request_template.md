@@ -54,6 +54,7 @@
 
 ## Checklist
 
+- [ ] Squash merge message has **no** `Co-authored-by: Cursor` line
 - [ ] Tests pass locally / CI green
 - [ ] Lint and type checking pass
 - [ ] No secrets committed (`.env`, keys, JSON credentials)
