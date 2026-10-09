@@ -39,6 +39,7 @@ For **GitHub Actions** (Firebase Hosting + rules deploy), grant the WIF deploy s
 - `roles/firebasehosting.admin` (Hosting)
 - `roles/firebaserules.admin` (Firestore rules test/deploy)
 - `roles/serviceusage.serviceUsageConsumer` (Storage rules deploy via Firebase CLI)
+- `roles/firebasestorage.viewer` (resolve default Storage bucket — `firebasestorage.defaultBucket.get`)
 
 ```bash
 export PROJECT_ID=YOUR_GCP_PROJECT_ID
@@ -51,6 +52,10 @@ gcloud projects add-iam-policy-binding "$PROJECT_ID" \
 gcloud projects add-iam-policy-binding "$PROJECT_ID" \
   --member="serviceAccount:${SA}" \
   --role="roles/serviceusage.serviceUsageConsumer"
+
+gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+  --member="serviceAccount:${SA}" \
+  --role="roles/firebasestorage.viewer"
 ```
 
 **Deploy Frontend** runs two jobs: **deploy-hosting** (required) and **deploy-firebase-rules** (required for a green workflow). If the rules job fails with `403`, the workflow is **failed** even though Hosting may already be live—check the **deploy-firebase-rules** job logs, not only the workflow summary.
@@ -59,7 +64,7 @@ Grant the roles above to `github-deploy@…` so CI can deploy rules. Until that 
 
 ## Release checklist (Firebase rules)
 
-Required until **Deploy Frontend → deploy-firebase-rules** succeeds in GitHub Actions (no `403` on `firebaserules.googleapis.com` or `serviceusage.googleapis.com`):
+Required until **Deploy Frontend → deploy-firebase-rules** succeeds in GitHub Actions (no `403` on `firebaserules.googleapis.com`, `serviceusage.googleapis.com`, or `firebasestorage.googleapis.com`):
 
 1. After merging changes to `frontend/firestore.rules` or `frontend/storage.rules`, open [Firebase Console](https://console.firebase.google.com/) → your project.
 2. **Firestore → Rules** — paste from `frontend/firestore.rules` → **Publish**.
