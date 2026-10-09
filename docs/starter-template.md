@@ -14,6 +14,7 @@ This document marks the **infrastructure starter** as complete. Competition-spec
 | Activity feed | `GET /api/v1/activity`, dashboard **Recent activity** |
 | Google sign-in | Firebase Auth + optional `AUTH_REQUIRED` |
 | Security policy | [security-defaults.md](security-defaults.md), Gitleaks + pip-audit in CI |
+| Product analytics (optional) | [setup/posthog.md](setup/posthog.md) — funnels & demo evidence, not AI quality |
 
 ## First-time GCP / GitHub setup
 

@@ -15,6 +15,14 @@ import {
 } from "@/components/ui/card";
 import { notifyActivityUpdated } from "@/lib/activity-events";
 import { uploadFile } from "@/lib/api";
+import {
+  bucketFileSize,
+  fileExtension,
+  trackAiWorkflowCompleted,
+  trackAiWorkflowFailed,
+  trackInputSubmitted,
+  trackRecommendationReviewed,
+} from "@/lib/posthog/events";
 import type { FileUploadResponse } from "@/types/api";
 
 const ACCEPT = ".pdf,.png,.jpg,.jpeg,.txt";
@@ -26,15 +34,31 @@ export function FileUpload() {
   const [result, setResult] = useState<FileUploadResponse | null>(null);
 
   const processFile = useCallback(async (file: File) => {
+    trackInputSubmitted("file_upload", {
+      file_extension: fileExtension(file.name),
+      size_bytes_bucket: bucketFileSize(file.size),
+    });
     setLoading(true);
     setError(null);
     setResult(null);
+    const started = performance.now();
     try {
       const data = await uploadFile(file);
       setResult(data);
       notifyActivityUpdated();
+      trackAiWorkflowCompleted(
+        "file_upload",
+        Math.round(performance.now() - started)
+      );
+      trackRecommendationReviewed("file_upload");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Upload failed.");
+      const msg = err instanceof Error ? err.message : "Upload failed.";
+      setError(msg);
+      trackAiWorkflowFailed(
+        "file_upload",
+        Math.round(performance.now() - started),
+        msg
+      );
     } finally {
       setLoading(false);
     }

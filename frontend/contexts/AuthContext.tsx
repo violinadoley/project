@@ -18,6 +18,10 @@ import {
 
 import { setAuthTokenProvider } from "@/lib/api";
 import { getFirebaseAuth, isFirebaseConfigured } from "@/lib/firebase/client";
+import {
+  identifyPostHogUser,
+  resetPostHogUser,
+} from "@/lib/posthog/client";
 
 type AuthContextValue = {
   user: User | null;
@@ -46,6 +50,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const unsubscribe = onAuthStateChanged(auth, (nextUser) => {
       setUser(nextUser);
       setLoading(false);
+      if (nextUser?.uid) {
+        identifyPostHogUser(nextUser.uid);
+      } else {
+        resetPostHogUser();
+      }
     });
     return () => unsubscribe();
   }, [configured]);
