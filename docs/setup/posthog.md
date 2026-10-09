@@ -44,6 +44,19 @@ Use **separate PostHog projects** (or environments) for local vs production when
 
 Properties: `workflow_type`, `environment`, plus buckets — see `frontend/lib/posthog/events.ts`.
 
+## Rotate a compromised key
+
+If a project API key (`phc_…`) was pasted in chat, committed, or shared:
+
+1. PostHog → **Project settings** → create a **new** project API key and disable or delete the old one.
+2. Update GitHub and local env:
+
+   ```bash
+   ./scripts/sync-posthog-github-vars.sh phc_your_new_key
+   ```
+
+3. Redeploy frontend (push to `develop` or **Deploy Frontend** workflow dispatch).
+
 ## Privacy
 
 - **Do not** send prompts, AI outputs, filenames, or document contents in analytics (UI masks replay with `data-ph-mask` where noted).
