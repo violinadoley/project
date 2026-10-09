@@ -40,7 +40,32 @@ For **GitHub Actions** (Firebase Hosting + rules deploy), grant the WIF deploy s
 - `roles/firebaserules.admin` (Firestore rules test/deploy)
 - `roles/serviceusage.serviceUsageConsumer` (Storage rules deploy via Firebase CLI)
 
-CI always deploys **Hosting**. Firestore/Storage rules deploy in optional steps; if they fail, paste `frontend/firestore.rules` and `frontend/storage.rules` in the Firebase Console once, or grant the roles above to `github-deploy@…`.
+```bash
+export PROJECT_ID=YOUR_GCP_PROJECT_ID
+export SA="github-deploy@${PROJECT_ID}.iam.gserviceaccount.com"
+
+gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+  --member="serviceAccount:${SA}" \
+  --role="roles/firebaserules.admin"
+
+gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+  --member="serviceAccount:${SA}" \
+  --role="roles/serviceusage.serviceUsageConsumer"
+```
+
+**Deploy Frontend** runs two jobs: **deploy-hosting** (required) and **deploy-firebase-rules** (required for a green workflow). If the rules job fails with `403`, the workflow is **failed** even though Hosting may already be live—check the **deploy-firebase-rules** job logs, not only the workflow summary.
+
+Grant the roles above to `github-deploy@…` so CI can deploy rules. Until that job is green, use the [release checklist](#release-checklist-firebase-rules) whenever you change `frontend/firestore.rules` or `frontend/storage.rules`.
+
+## Release checklist (Firebase rules)
+
+Required until **Deploy Frontend → deploy-firebase-rules** succeeds in GitHub Actions (no `403` on `firebaserules.googleapis.com` or `serviceusage.googleapis.com`):
+
+1. After merging changes to `frontend/firestore.rules` or `frontend/storage.rules`, open [Firebase Console](https://console.firebase.google.com/) → your project.
+2. **Firestore → Rules** — paste from `frontend/firestore.rules` → **Publish**.
+3. **Storage → Rules** — paste from `frontend/storage.rules` → **Publish**.
+4. Confirm both match the repo (deny-all client access: `allow read, write: if false`).
+5. After IAM is fixed, re-run **Deploy Frontend** and confirm **deploy-firebase-rules** is green so this checklist can be retired for that project.
 
 If Firestore is not created yet:
 

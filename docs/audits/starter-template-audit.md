@@ -29,7 +29,7 @@ Full audit performed against the AI Builder Cup starter (platform only). This do
 ## Still manual / external
 
 - GitHub branch protection, WIF, Secret Manager, Firestore/Storage **console** first-time enable
-- Deploy rules after merge (frontend workflow)
+- **`github-deploy@…` IAM** for automated rules deploy (`roles/firebaserules.admin`, `roles/serviceusage.serviceUsageConsumer`) — until green, use [Firebase rules release checklist](../setup/firebase-backend.md#release-checklist-firebase-rules) when `frontend/*.rules` change
 - Optional: Sentry SDK, richer ai-evals datasets, Vitest
 - Rotate PostHog project key if it was exposed in chat
 

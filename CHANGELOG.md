@@ -6,7 +6,17 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versio
 
 ## [Unreleased]
 
-_Competition-specific features go here._
+### Changed
+
+- **Deploy Frontend** splits **deploy-hosting** and **deploy-firebase-rules**; rules deploy failures fail the workflow (no `continue-on-error` on rules)
+
+### Fixed
+
+- Green frontend deploys no longer conceal failed Firestore/Storage rules deployment
+
+### Documentation
+
+- Firebase rules [release checklist](docs/setup/firebase-backend.md#release-checklist-firebase-rules) until CI rules job succeeds
 
 ## [0.2.1] - 2026-10-09
 
