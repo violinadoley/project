@@ -36,7 +36,7 @@ def create_app() -> FastAPI:
     settings = get_settings()
     app = FastAPI(
         title="Backend API",
-        version="0.1.0",
+        version=settings.app_version,
         lifespan=lifespan,
         docs_url="/docs" if not settings.is_production else None,
         redoc_url=None,

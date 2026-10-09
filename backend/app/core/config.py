@@ -16,7 +16,7 @@ class Settings(BaseSettings):
     gemini_model: str = Field(default="gemini-2.5-flash", alias="GEMINI_MODEL")
     ai_prompt_version: str = Field(default="v1", alias="AI_PROMPT_VERSION")
 
-    app_version: str = Field(default="0.1.0", alias="APP_VERSION")
+    app_version: str = Field(default="0.2.1", alias="APP_VERSION")
     git_sha: str = Field(default="dev", alias="GIT_SHA")
 
     firebase_project_id: str | None = Field(default=None, alias="FIREBASE_PROJECT_ID")
@@ -42,7 +42,8 @@ class Settings(BaseSettings):
 
     @property
     def is_production(self) -> bool:
-        return self.environment.lower() == "production"
+        """Treat Cloud Run `cloud` like production for error masking and OpenAPI."""
+        return self.environment.lower() in ("production", "cloud")
 
     @property
     def firebase_configured(self) -> bool:

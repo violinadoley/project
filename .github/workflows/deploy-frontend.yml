@@ -102,8 +102,8 @@ jobs:
           jq --arg site "${{ vars.GCP_PROJECT_ID }}" '.hosting.site = $site' firebase.json > firebase.tmp.json
           mv firebase.tmp.json firebase.json
 
-      - name: Deploy to Firebase Hosting
-        run: npx --yes firebase-tools@14.14.0 deploy --only hosting --project "${{ vars.GCP_PROJECT_ID }}"
+      - name: Deploy Firebase rules and Hosting
+        run: npx --yes firebase-tools@14.14.0 deploy --only firestore:rules,storage,hosting --project "${{ vars.GCP_PROJECT_ID }}"
 
       - name: Publish frontend URL
         continue-on-error: true
