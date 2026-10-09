@@ -1,5 +1,6 @@
-# MANUAL SETUP REQUIRED: Firebase Hosting on the same GCP project, WIF SA with Hosting Admin.
-# See docs/setup/firebase-hosting.md
+# MANUAL SETUP REQUIRED: Firebase Hosting + rules on the same GCP project, WIF deploy SA.
+# Jobs: deploy-hosting (Hosting), deploy-firebase-rules (Firestore/Storage rules — fails workflow on 403).
+# See docs/setup/firebase-hosting.md and docs/setup/firebase-backend.md
 
 name: Deploy Frontend
 
@@ -17,7 +18,7 @@ permissions:
   id-token: write
 
 jobs:
-  deploy:
+  deploy-hosting:
     if: vars.GCP_PROJECT_ID != '' && vars.PUBLIC_API_URL != ''
     runs-on: ubuntu-latest
     environment: gcp
@@ -105,14 +106,6 @@ jobs:
       - name: Deploy to Firebase Hosting
         run: npx --yes firebase-tools@14.14.0 deploy --only hosting --project "${{ vars.GCP_PROJECT_ID }}"
 
-      - name: Deploy Firestore rules
-        continue-on-error: true
-        run: npx --yes firebase-tools@14.14.0 deploy --only firestore:rules --project "${{ vars.GCP_PROJECT_ID }}"
-
-      - name: Deploy Storage rules
-        continue-on-error: true
-        run: npx --yes firebase-tools@14.14.0 deploy --only storage --project "${{ vars.GCP_PROJECT_ID }}"
-
       - name: Publish frontend URL
         continue-on-error: true
         env:
@@ -123,3 +116,46 @@ jobs:
           gh repo edit "${{ github.repository }}" \
             --homepage "$SITE" \
             --description "Google-native AI hackathon starter — Next.js, FastAPI, Gemini, Firebase. Live demo at the Website link; API docs in README."
+
+  deploy-firebase-rules:
+    needs: deploy-hosting
+    if: vars.GCP_PROJECT_ID != '' && vars.PUBLIC_API_URL != ''
+    runs-on: ubuntu-latest
+    environment: gcp
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Validate deploy variables
+        run: |
+          set -euo pipefail
+          for v in GCP_PROJECT_ID GCP_WIF_PROVIDER GCP_WIF_SERVICE_ACCOUNT; do
+            if [ -z "${!v:-}" ]; then
+              echo "::error::Missing variable $v"
+              exit 1
+            fi
+          done
+        env:
+          GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+          GCP_WIF_PROVIDER: ${{ vars.GCP_WIF_PROVIDER }}
+          GCP_WIF_SERVICE_ACCOUNT: ${{ vars.GCP_WIF_SERVICE_ACCOUNT }}
+
+      - name: Authenticate to Google Cloud (OIDC)
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_WIF_SERVICE_ACCOUNT }}
+
+      - name: Deploy Firestore and Storage rules
+        run: |
+          set -euo pipefail
+          npx --yes firebase-tools@14.14.0 deploy \
+            --only firestore:rules,storage \
+            --project "${{ vars.GCP_PROJECT_ID }}"
+
+      - name: Rules deploy failed — manual release step required
+        if: failure()
+        run: |
+          echo "::error::Firebase rules deploy failed. Hosting may already be updated. Publish frontend/firestore.rules and frontend/storage.rules in Firebase Console, or grant github-deploy IAM per docs/setup/firebase-backend.md"
