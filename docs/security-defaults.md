@@ -44,6 +44,10 @@ CI runs **Gitleaks** on repository contents (see [ci.yml](../.github/workflows/c
 
 Enable **Dependabot** (or Renovate) on the repository for npm and pip when you want automated update PRs. Not required for the starter baseline.
 
+## Product analytics (PostHog)
+
+Optional. See [setup/posthog.md](setup/posthog.md). When enabled, events are **metadata-only** (no prompts, file contents, or AI text). Session replay is **off** by default. PostHog does not replace Sentry, Cloud Logging, or `ai-evals/`.
+
 ## Before submission
 
 - [ ] Decide auth policy (`AUTH_REQUIRED` / public API).
