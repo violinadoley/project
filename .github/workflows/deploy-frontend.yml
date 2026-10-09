@@ -22,9 +22,6 @@ jobs:
     if: vars.GCP_PROJECT_ID != '' && vars.PUBLIC_API_URL != ''
     runs-on: ubuntu-latest
     environment: gcp
-    permissions:
-      contents: write
-      id-token: write
     defaults:
       run:
         working-directory: frontend
@@ -109,15 +106,11 @@ jobs:
       - name: Deploy to Firebase Hosting
         run: npx --yes firebase-tools@14.14.0 deploy --only hosting --project "${{ vars.GCP_PROJECT_ID }}"
 
-      - name: Publish frontend URL on GitHub
-        env:
-          GH_TOKEN: ${{ github.token }}
+      - name: Frontend URL
         run: |
           SITE="https://${{ vars.GCP_PROJECT_ID }}.web.app"
           echo "::notice title=Frontend (Firebase Hosting)::${SITE}"
-          gh repo edit "${{ github.repository }}" \
-            --homepage "$SITE" \
-            --description "Google-native AI hackathon starter (v1.0.0) — Next.js, FastAPI, Gemini, Firebase. Live demo: Website link; API: README."
+          echo "To set the GitHub repo Website link, run: ./scripts/set-github-repo-links.sh \"${SITE}\" \"<your-cloud-run-url>/docs\""
 
   deploy-firebase-rules:
     needs: deploy-hosting
