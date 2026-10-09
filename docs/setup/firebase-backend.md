@@ -6,7 +6,7 @@ Use the **same GCP project** as Cloud Run (`GCP_PROJECT_ID`). The API uses the *
 
 1. [Firebase Console](https://console.firebase.google.com/) → your project.
 2. **Build → Firestore Database → Create database** → start in **production mode** (API uses Admin SDK; clients use your FastAPI routes, not direct Firestore reads). Deploy **`frontend/firestore.rules`** and **`frontend/storage.rules`** (deny all client access) via **Deploy Frontend** or `firebase deploy --only firestore:rules,storage` from `frontend/`.
-3. **Build → Storage → Get started** — note the bucket name (often `YOUR_PROJECT_ID.firebasestorage.app`).
+3. **Build → Storage → Get started** — finish setup (required for CI Storage rules deploy). Note the bucket name (often `YOUR_PROJECT_ID.firebasestorage.app`).
 4. **Build → Authentication → Get started → Sign-in method → Google → Enable**.
 5. **Project settings → Your apps → Add app → Web** — register a web app (required for client login). Copy **apiKey** and **appId** for GitHub variables below.
 
@@ -71,6 +71,8 @@ Required until **Deploy Frontend → deploy-firebase-rules** succeeds in GitHub 
 3. **Storage → Rules** — paste from `frontend/storage.rules` → **Publish**.
 4. Confirm both match the repo (deny-all client access: `allow read, write: if false`).
 5. After IAM is fixed, re-run **Deploy Frontend** and confirm **deploy-firebase-rules** is green so this checklist can be retired for that project.
+
+If CI logs say **Firebase Storage has not been set up**, open **Build → Storage** in the Firebase Console and complete **Get started** (even if rules were pasted manually). The deploy workflow pins the bucket from `FIREBASE_STORAGE_BUCKET` or `{GCP_PROJECT_ID}.firebasestorage.app`.
 
 If Firestore is not created yet:
 

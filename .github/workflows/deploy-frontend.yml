@@ -148,11 +148,26 @@ jobs:
           workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
           service_account: ${{ vars.GCP_WIF_SERVICE_ACCOUNT }}
 
-      - name: Deploy Firestore and Storage rules
+      - name: Configure storage bucket for rules deploy
         run: |
-          set -euo pipefail
+          PROJECT="${{ vars.GCP_PROJECT_ID }}"
+          BUCKET="${{ vars.FIREBASE_STORAGE_BUCKET }}"
+          if [ -z "$BUCKET" ]; then
+            BUCKET="${PROJECT}.firebasestorage.app"
+          fi
+          jq --arg b "$BUCKET" '.storage = [{"bucket": $b, "rules": "storage.rules"}]' firebase.json > firebase.tmp.json
+          mv firebase.tmp.json firebase.json
+
+      - name: Deploy Firestore rules
+        run: |
           npx --yes firebase-tools@14.14.0 deploy \
-            --only firestore:rules,storage \
+            --only firestore:rules \
+            --project "${{ vars.GCP_PROJECT_ID }}"
+
+      - name: Deploy Storage rules
+        run: |
+          npx --yes firebase-tools@14.14.0 deploy \
+            --only storage \
             --project "${{ vars.GCP_PROJECT_ID }}"
 
       - name: Rules deploy failed — manual release step required
