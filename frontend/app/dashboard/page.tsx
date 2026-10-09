@@ -1,11 +1,13 @@
 import { AIInteraction } from "@/components/AIInteraction";
 import { FileUpload } from "@/components/FileUpload";
 import { DashboardWorkflowTracker } from "@/components/analytics/DashboardWorkflowTracker";
+import { DashboardAuthGate } from "@/components/dashboard/DashboardAuthGate";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { RecentActivity } from "@/components/dashboard/RecentActivity";
 
 export default function DashboardPage() {
   return (
+    <DashboardAuthGate>
     <div className="min-h-screen flex flex-col bg-background">
       <DashboardWorkflowTracker />
       <DashboardHeader />
@@ -28,5 +30,6 @@ export default function DashboardPage() {
         </div>
       </main>
     </div>
+    </DashboardAuthGate>
   );
 }

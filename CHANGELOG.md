@@ -8,6 +8,28 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versio
 
 _Competition-specific features go here._
 
+## [0.2.1] - 2026-10-09
+
+### Added
+
+- Firestore and Storage security rules in repo (`frontend/firestore.rules`, `frontend/storage.rules`); deployed with frontend workflow
+- `DashboardAuthGate` when `NEXT_PUBLIC_AUTH_REQUIRED=true`
+- Backend auth tests (`test_auth.py`)
+- Audit summary: [docs/audits/starter-template-audit.md](docs/audits/starter-template-audit.md)
+
+### Changed
+
+- Activity API returns **per-user** items only; anonymous callers get an empty list
+- AI activity logs store length buckets only (no prompt or model text in Firestore)
+- Cloud Run `cloud` environment treated as production for API error masking and OpenAPI
+- Gemini `/generate` uses async thread pool with 60s timeout
+- `pytest` / `httpx` moved to backend dev requirements only (slimmer Docker image)
+- Aligned `APP_VERSION` to **0.2.1** across backend, deploy, and frontend package
+
+### Fixed
+
+- Storage upload failures return HTTP 400 when cloud storage is configured (no silent `storage_key: null`)
+
 ## [0.2.0] - 2026-10-08
 
 ### Added
