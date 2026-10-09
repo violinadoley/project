@@ -34,6 +34,14 @@ gcloud projects add-iam-policy-binding "$PROJECT_ID" \
   --role="roles/storage.objectAdmin"
 ```
 
+For **GitHub Actions** (Firebase Hosting + rules deploy), grant the WIF deploy service account (e.g. `github-deploy@…`) at least:
+
+- `roles/firebasehosting.admin`
+- `roles/datastore.indexAdmin` (Firestore rules)
+- `roles/serviceusage.serviceUsageConsumer` (Storage rules deploy via Firebase CLI)
+
+If Storage rules deploy fails in CI, paste `frontend/storage.rules` in **Firebase Console → Storage → Rules** once.
+
 If Firestore is not created yet:
 
 ```bash
