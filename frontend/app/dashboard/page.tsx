@@ -1,11 +1,13 @@
 import { AIInteraction } from "@/components/AIInteraction";
 import { FileUpload } from "@/components/FileUpload";
+import { DashboardWorkflowTracker } from "@/components/analytics/DashboardWorkflowTracker";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { RecentActivity } from "@/components/dashboard/RecentActivity";
 
 export default function DashboardPage() {
   return (
     <div className="min-h-screen flex flex-col bg-background">
+      <DashboardWorkflowTracker />
       <DashboardHeader />
       <main className="mx-auto w-full max-w-6xl flex-1 space-y-8 px-4 py-8 sm:px-6">
         <div>

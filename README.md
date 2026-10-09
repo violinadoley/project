@@ -78,6 +78,8 @@ Or run `./scripts/dev.sh` for instructions.
 
 Security defaults (auth, public API, CI gates): [docs/security-defaults.md](docs/security-defaults.md).
 
+Optional product analytics (PostHog): [docs/setup/posthog.md](docs/setup/posthog.md).
+
 ## Running Frontend
 
 ```bash
