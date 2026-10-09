@@ -27,6 +27,10 @@ jobs:
     if: vars.GCP_PROJECT_ID != ''
     runs-on: ubuntu-latest
     environment: gcp
+    permissions:
+      actions: write
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@v7
 
@@ -116,9 +120,16 @@ jobs:
           API_BASE_URL="$URL" scripts/smoke-api.sh
 
       - name: Publish live API link for the team
+        id: publish_api_link
+        continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           DOCS_URL="${API_BASE_URL}/docs"
           gh variable set BACKEND_API_URL --body "$DOCS_URL" --repo "${{ github.repository }}"
           echo "::notice title=Backend API (Swagger)::${DOCS_URL}"
+
+      - name: API link fallback hint
+        if: steps.publish_api_link.outcome == 'failure'
+        run: |
+          echo "::warning::Could not set BACKEND_API_URL in Actions (403). Run: ./scripts/set-github-repo-links.sh \"https://\${GCP_PROJECT_ID}.web.app\" \"${API_BASE_URL}/docs\""

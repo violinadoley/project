@@ -70,11 +70,20 @@ gcloud projects add-iam-policy-binding GCP_PROJECT_ID \
 
 **Firebase Hosting + rules** (same `github-deploy@…` service account): also grant `roles/firebasehosting.admin`, `roles/firebaserules.admin`, `roles/serviceusage.serviceUsageConsumer`, and `roles/firebasestorage.viewer`. Copy-paste commands in [firebase-backend.md](./firebase-backend.md#2-gcp-apis-and-cloud-run-service-account).
 
-## 4. GitHub Actions token (repo metadata)
+## 4. GitHub repo links (Website + Swagger variable)
 
-Deploy workflows update the repository **Website** link and `BACKEND_API_URL` variable using `GITHUB_TOKEN`.
+**Settings → Actions → General → Workflow permissions** → **Read and write permissions** (required for `actions: write`).
 
-**Settings → Actions → General → Workflow permissions** → enable **Read and write permissions** (or allow `contents: write` and `actions: write` for workflows that need them). Without this, `gh repo edit` / `gh variable set` return HTTP 403.
+- **Deploy API** tries to set `BACKEND_API_URL` after each deploy. If it logs HTTP 403, run locally (once per URL change):
+
+  ```bash
+  chmod +x scripts/set-github-repo-links.sh
+  ./scripts/set-github-repo-links.sh \
+    "https://YOUR_PROJECT_ID.web.app" \
+    "https://YOUR_CLOUD_RUN_URL/docs"
+  ```
+
+- The GitHub **Website** field cannot always be updated from `GITHUB_TOKEN`; the script above sets homepage + variable with your `gh auth login` session.
 
 ## 5. Create Workload Identity Pool + Provider
 
