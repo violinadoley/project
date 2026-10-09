@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from typing import Annotated
 
@@ -12,6 +13,8 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/ai", tags=["ai"])
 
+AI_GENERATE_TIMEOUT_SECONDS = 60.0
+
 
 @router.post("/generate", response_model=GenerateResponse)
 async def generate_text(
@@ -21,7 +24,12 @@ async def generate_text(
     activity: Annotated[ActivityService, Depends(get_activity_service)],
 ) -> GenerateResponse:
     try:
-        text = ai.generate_text(body.message)
+        text = await asyncio.wait_for(
+            asyncio.to_thread(ai.generate_text, body.message),
+            timeout=AI_GENERATE_TIMEOUT_SECONDS,
+        )
+    except TimeoutError as exc:
+        raise AIGenerationError("Request timed out.") from exc
     except AIGenerationError:
         raise
     except Exception as exc:
