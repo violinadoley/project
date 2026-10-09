@@ -1,10 +1,10 @@
 # Starter template audit (2026-10-09)
 
-Full audit performed against the AI Builder Cup starter (platform only). This document summarizes outcomes and **0.2.1** remediations.
+Full audit performed against the AI Builder Cup starter (platform only). This document summarizes outcomes through **1.0.0**.
 
 ## Verdict
 
-| Milestone | Status after 0.2.1 |
+| Milestone | Status at 1.0.0 |
 |-----------|---------------------|
 | Local development | Ready |
 | Onboarding (with GCP setup) | Ready |
@@ -12,7 +12,7 @@ Full audit performed against the AI Builder Cup starter (platform only). This do
 | Strict multi-tenant production | Requires your auth/CORS/IAM choices |
 | Competition feature work | Ready to start |
 
-## Remediations in 0.2.1
+## Remediations (included in 1.0.0)
 
 | ID | Topic | Fix |
 |----|--------|-----|
@@ -24,7 +24,7 @@ Full audit performed against the AI Builder Cup starter (platform only). This do
 | AUD-FB-06 | Silent storage failure | Raise when storage configured |
 | AUD-D-03 | `cloud` vs production | `is_production` includes `cloud` |
 | AUD-B-04 | Test deps in image | pytest/httpx dev-only |
-| Version drift | 0.1.0 vs 0.2.0 | Unified **0.2.1** |
+| Version drift | Pre-1.0 tags | Unified **1.0.0** first release |
 
 ## Still manual / external
 
