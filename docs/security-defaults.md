@@ -49,9 +49,19 @@ Enable **Dependabot** (or Renovate) on the repository for npm and pip when you w
 
 Optional. See [setup/posthog.md](setup/posthog.md). When enabled, events are **metadata-only** (no prompts, file contents, or AI text). Session replay is **off** by default. PostHog does not replace Sentry, Cloud Logging, or `ai-evals/`.
 
+## Starter 1.0.0 defaults (documented)
+
+| Choice | Starter default | When to change |
+|--------|-----------------|----------------|
+| API auth | Open (`AUTH_REQUIRED=false`) | Set `AUTH_REQUIRED` + `NEXT_PUBLIC_AUTH_REQUIRED=true` for login-only demos |
+| Cloud Run ingress | `--allow-unauthenticated` | Cloud Run IAM + auth vars for locked-down API |
+| PostHog session replay | Off | Enable only after masking review |
+| Firebase client rules | Deny all (`frontend/*.rules`) | Never open client Firestore/Storage; use API + Admin SDK |
+
 ## Before submission
 
-- [ ] Decide auth policy (`AUTH_REQUIRED` / public API).
+- [ ] Decide auth policy (`AUTH_REQUIRED` / public API) and note it in your README.
 - [ ] Confirm no secrets in git (`gitleaks` green).
-- [ ] Firebase rules match repo: CI **deploy-firebase-rules** green, or [manual release checklist](setup/firebase-backend.md#release-checklist-firebase-rules) completed.
-- [ ] Rotate any key that was ever pasted in chat or committed by mistake.
+- [ ] Firebase rules: CI **deploy-firebase-rules** green after each rules change, or [fallback checklist](setup/firebase-backend.md#fallback-firebase-rules-if-ci-fails).
+- [ ] PostHog: rotate project key if it was pasted in chat — see [posthog.md](setup/posthog.md#rotate-a-compromised-key).
+- [ ] GitHub **Workflow permissions**: Read and write (for deploy homepage + `BACKEND_API_URL` updates) — [github-google-oidc.md](setup/github-google-oidc.md#4-github-actions-token-repo-metadata).

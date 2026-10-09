@@ -60,17 +60,17 @@ gcloud projects add-iam-policy-binding "$PROJECT_ID" \
 
 **Deploy Frontend** runs two jobs: **deploy-hosting** (required) and **deploy-firebase-rules** (required for a green workflow). If the rules job fails with `403`, the workflow is **failed** even though Hosting may already be live—check the **deploy-firebase-rules** job logs, not only the workflow summary.
 
-Grant the roles above to `github-deploy@…` so CI can deploy rules. Until that job is green, use the [release checklist](#release-checklist-firebase-rules) whenever you change `frontend/firestore.rules` or `frontend/storage.rules`.
+Grant the roles above to `github-deploy@…` so CI deploys rules on every **Deploy Frontend** run. If the rules job fails, use the [fallback checklist](#fallback-firebase-rules-if-ci-fails) below.
 
-## Release checklist (Firebase rules)
+## Fallback: Firebase rules if CI fails
 
-Required until **Deploy Frontend → deploy-firebase-rules** succeeds in GitHub Actions (no `403` on `firebaserules.googleapis.com`, `serviceusage.googleapis.com`, or `firebasestorage.googleapis.com`):
+Use only when **Deploy Frontend → deploy-firebase-rules** fails (for example `403` on `firebaserules.googleapis.com`, `serviceusage.googleapis.com`, or `firebasestorage.googleapis.com`):
 
 1. After merging changes to `frontend/firestore.rules` or `frontend/storage.rules`, open [Firebase Console](https://console.firebase.google.com/) → your project.
 2. **Firestore → Rules** — paste from `frontend/firestore.rules` → **Publish**.
 3. **Storage → Rules** — paste from `frontend/storage.rules` → **Publish**.
 4. Confirm both match the repo (deny-all client access: `allow read, write: if false`).
-5. After IAM is fixed, re-run **Deploy Frontend** and confirm **deploy-firebase-rules** is green so this checklist can be retired for that project.
+5. Fix IAM or Storage setup, then re-run **Deploy Frontend** until **deploy-firebase-rules** is green.
 
 If CI logs say **Firebase Storage has not been set up**, open **Build → Storage** in the Firebase Console and complete **Get started** (even if rules were pasted manually). The deploy workflow pins the bucket from `FIREBASE_STORAGE_BUCKET` or `{GCP_PROJECT_ID}.firebasestorage.app`.
 
