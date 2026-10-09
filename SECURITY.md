@@ -20,7 +20,7 @@ Never commit:
 - `service-account.json`, `credentials.json`
 - Private keys (`.pem`, `.key`)
 
-CI includes a basic check for tracked secret-like filenames. This is not a substitute for careful review.
+CI runs **Gitleaks** (content) and blocks tracked secret-like filenames. See [docs/security-defaults.md](docs/security-defaults.md).
 
 ## Authentication
 
@@ -31,7 +31,7 @@ CI includes a basic check for tracked secret-like filenames. This is not a subst
 ## Dependencies
 
 - Backend: `pip-audit`, `bandit` in CI
-- Frontend: `npm audit` (high severity) — review failures
+- Frontend: production `npm audit` (high+) with an explicit allowlist in [`.github/npm-audit-allowlist.json`](.github/npm-audit-allowlist.json)
 
 ## Logging
 
