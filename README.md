@@ -56,10 +56,6 @@ TODO: Describe the proposed AI solution
 
 See [docs/architecture.md](docs/architecture.md) for diagrams and extension points (RAG, ADK, embeddings — **future**).
 
-## MCP (Cursor agent tools)
-
-See [docs/mcp.md](docs/mcp.md) for the team MCP setup (GitHub, Context7, Playwright, Google Cloud, Firebase, Sentry, Postman). Configuration lives in [`.cursor/mcp.json`](.cursor/mcp.json).
-
 ## Local Setup
 
 ```bash
@@ -195,6 +191,10 @@ The **platform starter** (CI/CD, Hosting, Cloud Run, Auth, activity in Firestore
 - [ ] Category specified
 - [ ] Impact clearly explained
 - [ ] Scalability explained
+
+## Optional (local dev only)
+
+IDE MCP helpers for this repo: [docs/mcp.md](docs/mcp.md) — not part of the deployed product.
 
 ## License
 
