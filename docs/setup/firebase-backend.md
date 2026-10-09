@@ -5,7 +5,7 @@ Use the **same GCP project** as Cloud Run (`GCP_PROJECT_ID`). The API uses the *
 ## 1. Firebase console (one-time)
 
 1. [Firebase Console](https://console.firebase.google.com/) → your project.
-2. **Build → Firestore Database → Create database** → start in **production mode** (API uses Admin SDK; clients use your FastAPI routes, not direct Firestore reads).
+2. **Build → Firestore Database → Create database** → start in **production mode** (API uses Admin SDK; clients use your FastAPI routes, not direct Firestore reads). Deploy **`frontend/firestore.rules`** and **`frontend/storage.rules`** (deny all client access) via **Deploy Frontend** or `firebase deploy --only firestore:rules,storage` from `frontend/`.
 3. **Build → Storage → Get started** — note the bucket name (often `YOUR_PROJECT_ID.firebasestorage.app`).
 4. **Build → Authentication → Get started → Sign-in method → Google → Enable**.
 5. **Project settings → Your apps → Add app → Web** — register a web app (required for client login). Copy **apiKey** and **appId** for GitHub variables below.
@@ -65,7 +65,7 @@ Helper (after `firebase login` and web app exists):
 
 1. Push to `develop` → **Deploy API** + **Deploy Frontend**.
 2. Open `https://YOUR_PROJECT_ID.web.app` → **Sign in with Google**.
-3. Dashboard → AI message and file upload → **Recent activity** lists entries.
+3. Dashboard → sign in → AI message and file upload → **Recent activity** lists **your** entries only (anonymous callers get an empty feed).
 4. Upload response includes `storage_key` when Storage IAM and bucket are correct.
 
 ## Optional: require login

@@ -13,6 +13,7 @@ Deliberate choices for the hackathon starter. Change them when you harden for a 
 
 - API routes accept requests **without** a Bearer token.
 - If the user signs in on the web app, the frontend sends a Firebase ID token; the API **verifies** it when present and attaches `user_id` to activity logs.
+- **Activity feed:** `GET /api/v1/activity` returns items **only for the signed-in user**. Without a valid Bearer token it returns an empty list (even when `AUTH_REQUIRED=false`). Activity documents store **metadata only** (no prompts or model text).
 - To require login everywhere: set **`AUTH_REQUIRED=true`** and **`NEXT_PUBLIC_AUTH_REQUIRED=true`** in GitHub Actions variables, then redeploy API + frontend.
 
 Firebase **Google** sign-in must stay enabled in the console. Firestore is accessed only via the **Admin SDK** on Cloud Run (not direct client reads).
