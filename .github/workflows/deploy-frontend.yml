@@ -107,10 +107,6 @@ jobs:
         run: |
           SITE="https://${{ vars.GCP_PROJECT_ID }}.web.app"
           echo "::notice title=Frontend (Firebase Hosting)::${SITE}"
-          API_DOCS="${{ vars.BACKEND_API_URL }}"
-          if [ -z "$API_DOCS" ]; then
-            API_DOCS="${{ vars.PUBLIC_API_URL }}/docs"
-          fi
           gh repo edit "${{ github.repository }}" \
             --homepage "$SITE" \
-            --description "Web app: ${SITE} · API (Swagger): ${API_DOCS}"
+            --description "Google-native AI hackathon starter — Next.js, FastAPI, Gemini, Firebase. Live demo at the Website link; API docs in README."
