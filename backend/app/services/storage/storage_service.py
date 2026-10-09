@@ -3,6 +3,7 @@ import uuid
 from dataclasses import dataclass
 
 from app.core.config import Settings
+from app.core.exceptions import FileUploadError
 
 logger = logging.getLogger(__name__)
 
@@ -50,9 +51,9 @@ class StorageService:
                 blob = bucket.blob(storage_key)
                 blob.upload_from_string(data, content_type=content_type)
                 logger.info("Uploaded file to storage", extra={"storage_key": storage_key})
-            except Exception:
-                logger.exception("Storage upload failed; returning metadata only")
-                storage_key = None
+            except Exception as exc:
+                logger.exception("Storage upload failed")
+                raise FileUploadError("Unable to store file.") from exc
         else:
             logger.debug("Storage not configured; metadata-only upload.")
 

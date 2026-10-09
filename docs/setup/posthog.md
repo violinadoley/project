@@ -8,7 +8,15 @@ It is **not** a source of truth for AI correctness or backend errors.
 
 1. Create a project at [PostHog](https://posthog.com/) (US or EU cloud).
 2. Copy the **Project API key** (starts with `phc_`).
-3. GitHub **Settings → Variables** (for deploy) and local `frontend/.env.local`:
+3. GitHub **Settings → Variables** (for deploy) and local `frontend/.env.local`.
+
+   From your machine (after you have the `phc_` key):
+
+   ```bash
+   ./scripts/sync-posthog-github-vars.sh phc_your_project_api_key
+   ```
+
+   Or set variables manually:
 
 | Variable | Required | Notes |
 |----------|----------|--------|

@@ -37,13 +37,19 @@ class ActivityService:
         message: str,
         response_preview: str,
     ) -> None:
-        preview = message.strip().replace("\n", " ")
-        title = preview if len(preview) <= 72 else f"{preview[:69]}…"
+        del response_preview  # Do not persist model output in Firestore.
+        length = len(message.strip())
+        if length <= 50:
+            bucket = "1-50"
+        elif length <= 200:
+            bucket = "51-200"
+        else:
+            bucket = "201+"
         self._log(
             {
                 "type": "ai_generate",
-                "title": title,
-                "summary": response_preview[:200],
+                "title": "AI generation",
+                "summary": f"message_length_bucket={bucket}",
                 "user_id": user_id,
             }
         )
@@ -68,18 +74,18 @@ class ActivityService:
         )
 
     def list_recent(self, *, user_id: str | None, limit: int = 20) -> list[dict[str, Any]]:
-        if not self.enabled:
+        if not self.enabled or not user_id:
             return []
         try:
             raw = self._firestore.list_documents_ordered(
                 ACTIVITY_COLLECTION,
                 order_field="created_at",
                 descending=True,
-                limit=min(limit * 3, 100),
+                limit=min(limit * 5, 100),
             )
             rows: list[dict[str, Any]] = []
             for data in raw:
-                if user_id is not None and data.get("user_id") not in (user_id, None):
+                if data.get("user_id") != user_id:
                     continue
                 rows.append(data)
                 if len(rows) >= limit:

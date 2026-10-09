@@ -30,4 +30,4 @@ This document marks the **infrastructure starter** as complete. Competition-spec
 
 ## Version
 
-Starter baseline: **v0.2.0** (see [CHANGELOG](../CHANGELOG.md)).
+Starter baseline: **v0.2.1** (see [CHANGELOG](../CHANGELOG.md)).
