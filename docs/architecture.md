@@ -1,5 +1,7 @@
 # Architecture
 
+For technology choices, MCP adoption, and decision workflow, see [architecture/technology-decision-process.md](architecture/technology-decision-process.md).
+
 ## Overview
 
 This starter is a **monorepo** with a Next.js frontend and a FastAPI backend designed for Google Cloud and Firebase. Competition-specific logic is intentionally left as TODO placeholders.

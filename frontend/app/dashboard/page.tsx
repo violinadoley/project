@@ -1,5 +1,7 @@
 import { AIInteraction } from "@/components/AIInteraction";
 import { FileUpload } from "@/components/FileUpload";
+import { MedReconciliationPanel } from "@/components/meddocs/MedReconciliationPanel";
+import { ReviewQueuePanel } from "@/components/meddocs/ReviewQueuePanel";
 import { DashboardWorkflowTracker } from "@/components/analytics/DashboardWorkflowTracker";
 import { DashboardAuthGate } from "@/components/dashboard/DashboardAuthGate";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
@@ -15,16 +17,18 @@ export default function DashboardPage() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
           <p className="text-muted-foreground">
-            Generic AI workspace — replace placeholders with your competition
-            solution.
+            MedDocs Module 1 — synthetic medication reconciliation prototype
+            plus generic AI utilities.
           </p>
         </div>
         <div className="grid gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2 space-y-8">
+            <MedReconciliationPanel />
             <AIInteraction />
             <FileUpload />
           </div>
-          <div>
+          <div className="space-y-8">
+            <ReviewQueuePanel />
             <RecentActivity />
           </div>
         </div>

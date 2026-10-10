@@ -93,6 +93,11 @@ jobs:
             echo "CORS_ORIGINS: ${CORS_ORIGINS}"
             echo "FIREBASE_PROJECT_ID: ${FIREBASE_PROJECT_ID}"
             echo "FIREBASE_STORAGE_BUCKET: ${FIREBASE_STORAGE_BUCKET}"
+            echo "GCP_PROJECT_ID: ${FIREBASE_PROJECT_ID}"
+            echo "GCP_LOCATION: ${{ vars.GCP_REGION }}"
+            echo "DOCUMENT_AI_PROCESSOR_ID: ${{ vars.DOCUMENT_AI_PROCESSOR_ID }}"
+            echo "DOCUMENT_AI_LOCATION: ${{ vars.DOCUMENT_AI_LOCATION }}"
+            echo "VERTEX_GEMINI_MODEL: gemini-2.5-flash"
           } > "$ENV_FILE"
           gcloud run deploy "${{ env.SERVICE_NAME }}" \
             --project "${{ vars.GCP_PROJECT_ID }}" \

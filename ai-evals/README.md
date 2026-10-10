@@ -4,7 +4,7 @@ First-class regression testing for prompts, models, and retrieval changes.
 
 ## Status
 
-**Framework only** — datasets and scorers are placeholders until the competition AI workflow is defined.
+**Framework + MedDocs manifest** — generic prompt tests remain; `datasets/meddocs/manifest.json` holds synthetic reconciliation gold labels (no live Gemini in default CI).
 
 ## Layout
 

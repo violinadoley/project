@@ -4,6 +4,10 @@ from app.ai.base import AIService
 from app.ai.services.gemini_service import GeminiService
 from app.core.config import Settings, get_settings
 from app.core.exceptions import AuthenticationError
+from app.services.documents.document_ai_service import DocumentAIService
+from app.services.documents.document_store import DocumentStore
+from app.services.documents.intake_pipeline import MeddocsIntakePipeline
+from app.services.documents.vertex_gemini_service import VertexGeminiMeddocsService
 from app.services.firebase.activity_service import ActivityService
 from app.services.firebase.firestore_service import FirestoreService
 from app.services.storage.storage_service import StorageService
@@ -79,3 +83,33 @@ async def require_user(
     if settings.auth_required and user is None:
         raise AuthenticationError()
     return user
+
+
+def get_document_ai_service(
+    settings: Annotated[Settings, Depends(get_settings)],
+) -> DocumentAIService:
+    return DocumentAIService(settings)
+
+
+def get_vertex_meddocs_service(
+    settings: Annotated[Settings, Depends(get_settings)],
+) -> VertexGeminiMeddocsService:
+    return VertexGeminiMeddocsService(settings)
+
+
+def get_document_store(
+    settings: Annotated[Settings, Depends(get_settings)],
+    firestore: Annotated[FirestoreService, Depends(get_firestore_service)],
+) -> DocumentStore:
+    fs = firestore if settings.firebase_configured else None
+    return DocumentStore(settings, firestore=fs)
+
+
+def get_meddocs_pipeline(
+    settings: Annotated[Settings, Depends(get_settings)],
+    storage: Annotated[StorageService, Depends(get_storage_service)],
+    store: Annotated[DocumentStore, Depends(get_document_store)],
+    document_ai: Annotated[DocumentAIService, Depends(get_document_ai_service)],
+    vertex: Annotated[VertexGeminiMeddocsService, Depends(get_vertex_meddocs_service)],
+) -> MeddocsIntakePipeline:
+    return MeddocsIntakePipeline(settings, storage, store, document_ai, vertex)

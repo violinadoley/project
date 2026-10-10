@@ -34,3 +34,13 @@ class AIGenerationError(AppException):
 class FileUploadError(AppException):
     def __init__(self, message: str) -> None:
         super().__init__("FILE_UPLOAD_ERROR", message, status_code=400)
+
+
+class DocumentAIConfigurationError(AppException):
+    def __init__(self, message: str) -> None:
+        super().__init__("DOCUMENT_AI_MISCONFIGURED", message, status_code=503)
+
+
+class MeddocsProcessingError(AppException):
+    def __init__(self, message: str, code: str = "MEDDOCS_PROCESSING_ERROR") -> None:
+        super().__init__(code, message, status_code=422)

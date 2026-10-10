@@ -4,6 +4,10 @@ import type {
   FileUploadResponse,
   GenerateAIResponse,
 } from "@/types/api";
+import type {
+  MedReconciliationJob,
+  ReconciliationReviewRequest,
+} from "@/types/meddocs";
 
 const DEFAULT_API_URL = "http://localhost:8000";
 
@@ -93,6 +97,70 @@ export async function listActivity(limit = 20): Promise<ActivityListResponse["it
 
   const data = (await response.json()) as ActivityListResponse;
   return data.items;
+}
+
+export async function createMedReconciliation(
+  files: File[]
+): Promise<MedReconciliationJob> {
+  const form = new FormData();
+  for (const file of files) {
+    form.append("files", file);
+  }
+  const response = await fetch(`${getBaseUrl()}/api/v1/meddocs/reconciliation`, {
+    method: "POST",
+    headers: await buildHeaders(),
+    body: form,
+  });
+  if (!response.ok) {
+    throw await parseError(response);
+  }
+  return (await response.json()) as MedReconciliationJob;
+}
+
+export async function fetchMedReconciliation(
+  jobId: string
+): Promise<MedReconciliationJob> {
+  const response = await fetch(
+    `${getBaseUrl()}/api/v1/meddocs/reconciliation/${jobId}`,
+    { headers: await buildHeaders(), cache: "no-store" }
+  );
+  if (!response.ok) {
+    throw await parseError(response);
+  }
+  return (await response.json()) as MedReconciliationJob;
+}
+
+export async function fetchMedReviewQueue(): Promise<MedReconciliationJob[]> {
+  const response = await fetch(`${getBaseUrl()}/api/v1/meddocs/review-queue`, {
+    headers: await buildHeaders(),
+    cache: "no-store",
+  });
+  if (!response.ok) {
+    throw await parseError(response);
+  }
+  return (await response.json()) as MedReconciliationJob[];
+}
+
+export async function submitMedReconciliationReview(
+  jobId: string,
+  body: ReconciliationReviewRequest
+): Promise<{ job_id: string; status: string; human_review: MedReconciliationJob["human_review"] }> {
+  const response = await fetch(
+    `${getBaseUrl()}/api/v1/meddocs/reconciliation/${jobId}/review`,
+    {
+      method: "POST",
+      headers: await buildHeaders({ "Content-Type": "application/json" }),
+      body: JSON.stringify(body),
+    }
+  );
+  if (!response.ok) {
+    throw await parseError(response);
+  }
+  return (await response.json()) as {
+    job_id: string;
+    status: string;
+    human_review: MedReconciliationJob["human_review"];
+  };
 }
 
 export async function checkHealth(): Promise<boolean> {

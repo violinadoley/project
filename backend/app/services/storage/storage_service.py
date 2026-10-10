@@ -43,7 +43,7 @@ class StorageService:
 
         if self.storage_configured:
             try:
-                from google.cloud import storage
+                from google.cloud import storage  # type: ignore[attr-defined]
 
                 client = storage.Client(project=self._settings.firebase_project_id)
                 bucket = client.bucket(self._settings.firebase_storage_bucket)

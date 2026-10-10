@@ -1,4 +1,8 @@
-export type WorkflowType = "dashboard" | "ai_chat" | "file_upload";
+export type WorkflowType =
+  | "dashboard"
+  | "ai_chat"
+  | "file_upload"
+  | "meddocs_reconciliation";
 
 export function isPostHogEnabled(): boolean {
   const key = process.env.NEXT_PUBLIC_POSTHOG_KEY?.trim();

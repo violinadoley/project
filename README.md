@@ -7,6 +7,7 @@
 | **Live app** | [Open dashboard](https://project-bf77a013-c0b3-413c-a75.web.app/dashboard) |
 | **API (Swagger)** | Set `BACKEND_API_URL` in GitHub Variables (updated each Deploy API) or use your Cloud Run `/docs` URL |
 | **Starter guide** | [docs/starter-template.md](docs/starter-template.md) |
+| **Architecture decisions** | [docs/architecture/technology-decision-process.md](docs/architecture/technology-decision-process.md) |
 
 Replace `PROJECT_NAME` and URLs when you fork for your own GCP project. Setup: [firebase-hosting.md](docs/setup/firebase-hosting.md).
 
@@ -27,14 +28,17 @@ Local API docs: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs).
 
 ## Problem
 
-TODO: Add competition problem statement
+Medication lists often differ across discharge paperwork, prior records, and current prescriptions. Teams need auditable evidence for each extracted field before a human reconciler can safely review changes — without auto-approving regimens from a hackathon demo.
 
 ## Solution
 
-TODO: Describe the proposed AI solution
+**MedDocs Module 1** (synthetic documents only): upload up to three files → optional Document AI OCR (or Vertex-only path when the processor is unset) → server-owned `SourceBlock` catalogs → Vertex Gemini extraction citing block IDs only → deterministic medication comparison → **`needs_review`** for every discrepancy (including documented changes) and whenever reconciliation relied on `vertex_only`/`low` evidence. Generic Gemini chat remains on `POST /api/v1/ai/generate`.
+
+Setup: [docs/setup/document-ai-vertex-meddocs.md](docs/setup/document-ai-vertex-meddocs.md).
 
 ## Key Features
 
+- MedDocs medication reconciliation UI (synthetic PDFs/text, review queue, evidence snippets)
 - Landing page and generic AI dashboard (text + file upload)
 - Gemini integration via official `google-genai` SDK (model from env)
 - Firebase Auth (Google), Firestore activity feed, and GCS uploads via the API

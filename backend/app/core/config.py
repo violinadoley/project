@@ -32,6 +32,20 @@ class Settings(BaseSettings):
     log_level: str = Field(default="INFO", alias="LOG_LEVEL")
     cors_origins: str = Field(default="http://localhost:3000", alias="CORS_ORIGINS")
 
+    gcp_project_id: str | None = Field(default=None, alias="GCP_PROJECT_ID")
+    gcp_location: str = Field(default="us-central1", alias="GCP_LOCATION")
+    document_ai_processor_id: str | None = Field(default=None, alias="DOCUMENT_AI_PROCESSOR_ID")
+    document_ai_location: str = Field(default="us", alias="DOCUMENT_AI_LOCATION")
+    vertex_model: str = Field(default="gemini-2.5-flash", alias="VERTEX_GEMINI_MODEL")
+
+    @property
+    def effective_gcp_project_id(self) -> str | None:
+        return self.gcp_project_id or self.firebase_project_id
+
+    @property
+    def document_ai_configured(self) -> bool:
+        return bool(self.document_ai_processor_id and self.document_ai_processor_id.strip())
+
     @property
     def cors_origin_list(self) -> list[str]:
         return [o.strip() for o in self.cors_origins.split(",") if o.strip()]

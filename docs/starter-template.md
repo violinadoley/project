@@ -22,6 +22,13 @@ This document marks the **infrastructure starter** as complete. Competition-spec
 2. [firebase-hosting.md](setup/firebase-hosting.md)
 3. [firebase-backend.md](setup/firebase-backend.md)
 
+## Architecture and tooling reference
+
+- [architecture/technology-decision-process.md](architecture/technology-decision-process.md)
+- [architecture/technology-capability-matrix.md](architecture/technology-capability-matrix.md)
+- [architecture/mcp-and-tooling-catalogue.md](architecture/mcp-and-tooling-catalogue.md)
+- [architecture/healthcare-google-cloud.md](architecture/healthcare-google-cloud.md) — [Cloud Healthcare API](https://docs.cloud.google.com/healthcare-api/docs) (healthcare track)
+
 ## Day-to-day workflow
 
 1. Branch from `develop` → PR → merge to `develop` (deploys API + frontend).

@@ -2,6 +2,8 @@
 
 **Not shipped to users.** This is for developers who want IDE-integrated tools (GitHub, GCP, Firebase, etc.) while working on the repo.
 
+Adoption tiers and competition-adjacent Google tools: [architecture/mcp-and-tooling-catalogue.md](architecture/mcp-and-tooling-catalogue.md).
+
 Example config: [`.cursor/mcp.json`](../.cursor/mcp.json) (merge with your editor’s global MCP settings). **Do not commit secrets**—use OAuth or `${env:VAR}` interpolation only.
 
 Official references:
